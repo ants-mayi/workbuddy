@@ -1,0 +1,643 @@
+{
+  "system": {
+    "ProductName": "macOS",
+    "ProductVersion": "26.6.2",
+    "BuildVersion": "25G83",
+    "kernel": "25.6.0",
+    "arch": "arm64",
+    "uname_m": "arm64",
+    "computer_name": "masc的MacBook Air",
+    "xcode_clt": "/Library/Developer/CommandLineTools",
+    "cpu_brand": "Apple M2",
+    "hw_model": "Mac14,2",
+    "memory_gb": 24.0,
+    "cpu_cores": "8",
+    "df_root": "Filesystem        Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s1s1   460Gi    12Gi   168Gi     7%    459k  1.8G    0%   /"
+  },
+  "tools": {
+    "python3": {
+      "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3",
+      "all_candidates": [
+        "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3",
+        "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3",
+        "/Users/masc/miniconda3/bin/python3",
+        "/opt/homebrew/bin/python3",
+        "/usr/bin/python3"
+      ],
+      "version": "Python 3.13.12"
+    },
+    "python": {
+      "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python",
+      "all_candidates": [
+        "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python",
+        "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python",
+        "/Users/masc/miniconda3/bin/python"
+      ]
+    },
+    "pip3": {
+      "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/pip3",
+      "all_candidates": [
+        "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/pip3",
+        "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/pip3",
+        "/Users/masc/miniconda3/bin/pip3",
+        "/opt/homebrew/bin/pip3",
+        "/usr/bin/pip3"
+      ],
+      "version": "pip 26.0 from /Users/masc/.workbuddy/binaries/python/versions/3.13.12/lib/python3.13/site-packages/pip (python 3.13)"
+    },
+    "conda": {
+      "path": "/Users/masc/miniconda3/bin/conda",
+      "all_candidates": [
+        "/Users/masc/miniconda3/bin/conda",
+        "/Users/masc/miniconda3/condabin/conda"
+      ],
+      "version": "conda 26.3.2"
+    },
+    "git": {
+      "path": "/opt/homebrew/bin/git",
+      "all_candidates": [
+        "/opt/homebrew/bin/git",
+        "/usr/bin/git"
+      ],
+      "version": "git version 2.51.2"
+    },
+    "node": {
+      "path": "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/node",
+      "all_candidates": [
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/node",
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/node",
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/node",
+        "/opt/homebrew/bin/node"
+      ],
+      "version": "v22.22.2"
+    },
+    "npm": {
+      "path": "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npm",
+      "all_candidates": [
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npm",
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npm",
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npm",
+        "/opt/homebrew/bin/npm"
+      ],
+      "version": "10.9.7"
+    },
+    "npx": {
+      "path": "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npx",
+      "all_candidates": [
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npx",
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npx",
+        "/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npx",
+        "/opt/homebrew/bin/npx"
+      ],
+      "version": "10.9.7"
+    },
+    "java": {
+      "path": "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/java",
+      "all_candidates": [
+        "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/java",
+        "/usr/bin/java"
+      ],
+      "version": "openjdk version \"17.0.17\" 2025-10-21\nOpenJDK Runtime Environment Homebrew (build 17.0.17+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.17+0, mixed mode, sharing)"
+    },
+    "javac": {
+      "path": "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/javac",
+      "all_candidates": [
+        "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/javac",
+        "/usr/bin/javac"
+      ],
+      "version": "javac 17.0.17"
+    },
+    "mvn": {
+      "path": "/opt/homebrew/bin/mvn",
+      "all_candidates": [
+        "/opt/homebrew/bin/mvn"
+      ],
+      "version": "Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a1)\nMaven home: /opt/homebrew/Cellar/maven/3.9.12/libexec\nJava version: 17.0.17, vendor: Homebrew, runtime: /opt/homebrew/Cellar/openjdk@17/17.0.17/libexec/openjdk.jdk/Contents/Home\nDefault locale: zh_CN_#Hans, platform encoding: UTF-8"
+    },
+    "gradle": {
+      "path": null,
+      "all_candidates": []
+    },
+    "docker": {
+      "path": null,
+      "all_candidates": []
+    },
+    "docker-compose": {
+      "path": null,
+      "all_candidates": []
+    },
+    "mysql": {
+      "path": null,
+      "all_candidates": []
+    },
+    "redis-server": {
+      "path": null,
+      "all_candidates": []
+    },
+    "nginx": {
+      "path": null,
+      "all_candidates": []
+    },
+    "go": {
+      "path": "/opt/homebrew/bin/go",
+      "all_candidates": [
+        "/opt/homebrew/bin/go"
+      ],
+      "version": "go version go1.26.4 darwin/arm64"
+    },
+    "rustc": {
+      "path": null,
+      "all_candidates": []
+    },
+    "cargo": {
+      "path": null,
+      "all_candidates": []
+    },
+    "code": {
+      "path": null,
+      "all_candidates": []
+    },
+    "brew": {
+      "path": "/opt/homebrew/bin/brew",
+      "all_candidates": [
+        "/opt/homebrew/bin/brew"
+      ],
+      "version": "Homebrew 5.0.8\nHomebrew/homebrew-core (git revision 4cefec9; last commit 2025-08-04)"
+    },
+    "tail": {
+      "path": "/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin/tail",
+      "all_candidates": [
+        "/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin/tail",
+        "/usr/bin/tail"
+      ]
+    },
+    "curl": {
+      "path": "/usr/bin/curl",
+      "all_candidates": [
+        "/usr/bin/curl"
+      ]
+    },
+    "wget": {
+      "path": null,
+      "all_candidates": []
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "all_candidates": [
+        "/usr/bin/ssh"
+      ]
+    },
+    "ffmpeg": {
+      "path": "/opt/homebrew/bin/ffmpeg",
+      "all_candidates": [
+        "/opt/homebrew/bin/ffmpeg"
+      ],
+      "version": "ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg developers\nbuilt with Apple clang version 21.0.0 (clang-2100.0.123.102)\nconfiguration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.1.2 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gpl --enable-libsvtav1 --enable-libopus --enable-libx264 --enable-libmp3lame --enable-libdav1d --enable-libvmaf --enable-libvpx --enable-libx265 --enable-openssl --enable-videotoolbox --enable-audiotoolbox --enable-neon\nlibavutil      60. 26.102 / 60. 26.102"
+    },
+    "ollama": {
+      "path": "/usr/local/bin/ollama",
+      "all_candidates": [
+        "/usr/local/bin/ollama"
+      ],
+      "version": "ollama version is 0.40.16"
+    },
+    "deno": {
+      "path": "/opt/homebrew/bin/deno",
+      "all_candidates": [
+        "/opt/homebrew/bin/deno"
+      ],
+      "version": "deno 2.8.3 (stable, release, aarch64-apple-darwin)\nv8 14.9.207.2-rusty\ntypescript 6.0.3"
+    },
+    "uv": {
+      "path": null,
+      "all_candidates": []
+    },
+    "tailscale": {
+      "path": "/usr/local/bin/tailscale",
+      "all_candidates": [
+        "/usr/local/bin/tailscale"
+      ],
+      "version": "1.104.7\n  tailscale commit: fb3b9b2964ace04490fbd65d4f26a0eaf362131f\n  long version: 1.104.7-tfb3b9b296-g0651cc45e\n  other commit: 0651cc45e79e308b0b3b808f4b42e7f3a1a8c221"
+    }
+  },
+  "python_envs": {
+    "candidates": [
+      {
+        "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3",
+        "realpath": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3.13",
+        "version": "3.13.12",
+        "modules": []
+      },
+      {
+        "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3",
+        "realpath": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3.13",
+        "version": "3.13.12",
+        "modules": []
+      },
+      {
+        "path": "/Users/masc/miniconda3/bin/python3",
+        "realpath": "/Users/masc/miniconda3/bin/python3.13",
+        "version": "3.13.13",
+        "modules": [
+          "requests"
+        ]
+      },
+      {
+        "path": "/opt/homebrew/bin/python3",
+        "realpath": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+        "version": "3.14.6",
+        "modules": []
+      },
+      {
+        "path": "/usr/bin/python3",
+        "realpath": "/usr/bin/python3",
+        "version": "3.9.6",
+        "modules": [
+          "requests"
+        ]
+      },
+      {
+        "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python",
+        "realpath": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3.13",
+        "version": "3.13.12",
+        "modules": []
+      },
+      {
+        "path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python",
+        "realpath": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3.13",
+        "version": "3.13.12",
+        "modules": []
+      },
+      {
+        "path": "/Users/masc/miniconda3/bin/python",
+        "realpath": "/Users/masc/miniconda3/bin/python3.13",
+        "version": "3.13.13",
+        "modules": [
+          "requests"
+        ]
+      }
+    ],
+    "conda_env_list": [
+      "base                 *   /Users/masc/miniconda3",
+      "llm                      /Users/masc/miniconda3/envs/llm",
+      "pytorch                  /Users/masc/miniconda3/envs/pytorch",
+      "/Users/masc/study/AI/codex_v1/transformers-finetune-lab/.conda"
+    ]
+  },
+  "homebrew": {
+    "installed": true,
+    "prefix": "/opt/homebrew",
+    "formulas": [
+      "ada-url",
+      "aria2",
+      "brotli",
+      "c-ares",
+      "ca-certificates",
+      "cairo",
+      "certifi",
+      "dav1d",
+      "deno",
+      "duti",
+      "ffmpeg",
+      "fmt",
+      "fontconfig",
+      "freetype",
+      "gettext",
+      "giflib",
+      "git",
+      "glib",
+      "go",
+      "graphite2",
+      "harfbuzz",
+      "hdrhistogram_c",
+      "icu4c@77",
+      "icu4c@78",
+      "jpeg-turbo",
+      "lame",
+      "libnghttp2",
+      "libnghttp3",
+      "libngtcp2",
+      "libpng",
+      "libssh2",
+      "libtiff",
+      "libunistring",
+      "libuv",
+      "libvmaf",
+      "libvpx",
+      "libx11",
+      "libxau",
+      "libxcb",
+      "libxdmcp",
+      "libxext",
+      "libxrender",
+      "little-cms2",
+      "llhttp",
+      "lz4",
+      "lzo",
+      "maven",
+      "merve",
+      "mpdecimal",
+      "nbytes",
+      "node",
+      "openjdk",
+      "openjdk@17",
+      "openssl@3",
+      "opus",
+      "pcre2",
+      "pixman",
+      "python@3.14",
+      "readline",
+      "sdl2-compat",
+      "sdl3",
+      "simdjson",
+      "simdutf",
+      "sqlite",
+      "svt-av1",
+      "uvwasi",
+      "x264",
+      "x265",
+      "xorgproto",
+      "xz",
+      "yt-dlp",
+      "zstd"
+    ],
+    "casks": [
+      "mark-text",
+      "mos"
+    ],
+    "taps": [
+      "homebrew/core"
+    ],
+    "services_raw": ""
+  },
+  "launchd": {
+    "user_services_raw": "",
+    "gui_domain_ok": true,
+    "user_launchagents": [
+      "jetbrains.vmoptions.plist",
+      "com.google.keystone.xpcservice.plist",
+      "com.google.keystone.agent.plist",
+      "com.hitooler.filefinder.plist",
+      "org.freedownloadmanager.fdm6.plist",
+      "com.valvesoftware.steamclean.plist",
+      "com.google.GoogleUpdater.wake.plist"
+    ]
+  },
+  "ports": {
+    "source": "lsof",
+    "listening": [
+      {
+        "port": 7000,
+        "process": "ControlCe",
+        "pid": "620"
+      },
+      {
+        "port": 7000,
+        "process": "ControlCe",
+        "pid": "620"
+      },
+      {
+        "port": 5000,
+        "process": "ControlCe",
+        "pid": "620"
+      },
+      {
+        "port": 5000,
+        "process": "ControlCe",
+        "pid": "620"
+      },
+      {
+        "port": 49152,
+        "process": "rapportd",
+        "pid": "639"
+      },
+      {
+        "port": 49152,
+        "process": "rapportd",
+        "pid": "639"
+      },
+      {
+        "port": 59869,
+        "process": "logioptio",
+        "pid": "785"
+      },
+      {
+        "port": 49153,
+        "process": "Ollama",
+        "pid": "809"
+      },
+      {
+        "port": 11434,
+        "process": "ollama",
+        "pid": "842"
+      },
+      {
+        "port": 56352,
+        "process": "UURemote",
+        "pid": "860"
+      },
+      {
+        "port": 56353,
+        "process": "UURemote",
+        "pid": "860"
+      },
+      {
+        "port": 49267,
+        "process": "LogiPlugi",
+        "pid": "1033"
+      },
+      {
+        "port": 49269,
+        "process": "LogiPlugi",
+        "pid": "1033"
+      },
+      {
+        "port": 49270,
+        "process": "LogiPlugi",
+        "pid": "1033"
+      },
+      {
+        "port": 7892,
+        "process": "KuliCloud",
+        "pid": "2963"
+      },
+      {
+        "port": 18488,
+        "process": "Electron",
+        "pid": "13493"
+      },
+      {
+        "port": 54427,
+        "process": "Electron",
+        "pid": "13591"
+      },
+      {
+        "port": 53287,
+        "process": "Electron",
+        "pid": "13591"
+      },
+      {
+        "port": 53290,
+        "process": "Electron",
+        "pid": "13591"
+      },
+      {
+        "port": 53302,
+        "process": "node",
+        "pid": "13643"
+      },
+      {
+        "port": 54443,
+        "process": "sandbox-c",
+        "pid": "16000"
+      },
+      {
+        "port": 39099,
+        "process": "editor_sd",
+        "pid": "16007"
+      },
+      {
+        "port": 51070,
+        "process": "Electron",
+        "pid": "44982"
+      },
+      {
+        "port": 51510,
+        "process": "sandbox-c",
+        "pid": "45867"
+      },
+      {
+        "port": 52565,
+        "process": "Code\\x20H",
+        "pid": "48720"
+      },
+      {
+        "port": 52688,
+        "process": "Code\\x20H",
+        "pid": "48721"
+      },
+      {
+        "port": 52735,
+        "process": "Code\\x20H",
+        "pid": "48721"
+      },
+      {
+        "port": 11435,
+        "process": "python3.1",
+        "pid": "48872"
+      },
+      {
+        "port": 36510,
+        "process": "Lingma",
+        "pid": "48938"
+      },
+      {
+        "port": 37820,
+        "process": "Lingma",
+        "pid": "48938"
+      },
+      {
+        "port": 37510,
+        "process": "Lingma",
+        "pid": "48938"
+      },
+      {
+        "port": 8010,
+        "process": "python3.1",
+        "pid": "49988"
+      },
+      {
+        "port": 53490,
+        "process": "node",
+        "pid": "50743"
+      }
+    ],
+    "psutil_installed": false
+  },
+  "paths": {
+    "home": "/Users/masc",
+    "dir_Desktop": true,
+    "dir_Documents": true,
+    "dir_Downloads": true,
+    "dir_Projects(建议工作区)": false,
+    "dir_Dev(常见)": false,
+    "dir_dev(常见)": false,
+    "dir_Workspace(常见)": false,
+    "config_files": {
+      "git_global": {
+        "path": "/Users/masc/.gitconfig",
+        "exists": true
+      },
+      "zshrc": {
+        "path": "/Users/masc/.zshrc",
+        "exists": true
+      },
+      "zprofile": {
+        "path": "/Users/masc/.zprofile",
+        "exists": true
+      },
+      "bash_profile": {
+        "path": "/Users/masc/.bash_profile",
+        "exists": true
+      },
+      "ssh_config": {
+        "path": "/Users/masc/.ssh/config",
+        "exists": true
+      },
+      "npmrc": {
+        "path": "/Users/masc/.npmrc",
+        "exists": false
+      },
+      "condarc": {
+        "path": "/Users/masc/.condarc",
+        "exists": false
+      },
+      "docker_daemon": {
+        "path": "/Users/masc/.docker/daemon.json",
+        "exists": false
+      },
+      "maven_settings(常见位)": {
+        "path": "/Users/masc/.m2/settings.xml",
+        "exists": true
+      },
+      "gradle(常见位)": {
+        "path": "/Users/masc/.gradle/gradle.properties",
+        "exists": false
+      }
+    },
+    "git_user_name": "marco_masc",
+    "git_user_email": "marco_masc@outlook.com",
+    "ssh_keys": [
+      "id_ed25519",
+      "id_rsa"
+    ]
+  },
+  "env_vars": {
+    "PATH": "/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin:/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/safe-bin:/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin:/Users/masc/.workbuddy/binaries/node/versions/.locks/bin:/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin:/Users/masc/.workbuddy/binaries/python/versions/.locks/bin:/Users/masc/.workbuddy/binaries/node/cli-connector-packages/bin:/Users/masc/.workbuddy/binaries/python/envs/default/bin:/Users/masc/.workbuddy/external-packages/pdf-cli:/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/safe-bin:/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/safe-bin:/Users/masc/.workbuddy/plugins/cache/workbuddy-builtin/weixinpay/1.6.110/bin:/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin:/Users/masc/.workbuddy/binaries/node/versions/.locks/bin:/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin:/Users/masc/.workbuddy/binaries/python/versions/.locks/bin:/Users/masc/.workbuddy/binaries/node/cli-connector-packages/bin:/Users/masc/.workbuddy/binaries/python/envs/default/bin:/Users/masc/.workbuddy/external-packages/pdf-cli:/Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin:/Users/masc/.workbuddy/binaries/node/versions/.locks/bin:/Users/masc/miniconda3/bin:/Users/masc/miniconda3/condabin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin",
+    "HOME": "/Users/masc",
+    "SHELL": "/bin/zsh",
+    "USER": "masc",
+    "LANG": "C.UTF-8",
+    "JAVA_HOME": "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home",
+    "MAVEN_HOME": "(未设置)",
+    "M2_HOME": "(未设置)",
+    "GRADLE_HOME": "(未设置)",
+    "CONDA_PREFIX": "/Users/masc/miniconda3",
+    "NVM_DIR": "(未设置)",
+    "PYENV_ROOT": "(未设置)",
+    "HTTP_PROXY": "http://127.0.0.1:51510",
+    "HTTPS_PROXY": "http://127.0.0.1:51510",
+    "NO_PROXY": "127.0.0.1,localhost,::1",
+    "PIP_INDEX_URL": "(未设置)",
+    "HF_HOME": "(未设置)",
+    "TRANSFORMERS_CACHE": "(未设置)",
+    "DOCKER_HOST": "(未设置)"
+  },
+  "disks_raw": "/dev/disk3s1s1   460Gi    12Gi   168Gi     7%    459k  1.8G    0%   /\n/dev/disk3s6     460Gi    20Ki   168Gi     1%       0  1.8G    0%   /System/Volumes/VM\n/dev/disk3s2     460Gi   8.5Gi   168Gi     5%    1.5k  1.8G    0%   /System/Volumes/Preboot\n/dev/disk3s4     460Gi   6.5Mi   168Gi     1%     108  1.8G    0%   /System/Volumes/Update\n/dev/disk1s2     500Mi   6.0Mi   482Mi     2%       1  4.9M    0%   /System/Volumes/xarts\n/dev/disk1s1     500Mi   5.8Mi   482Mi     2%      31  4.9M    0%   /System/Volumes/iSCPreboot\n/dev/disk1s3     500Mi   1.0Mi   482Mi     1%     100  4.9M    0%   /System/Volumes/Hardware\n/dev/disk3s5     460Gi   270Gi   168Gi    62%    1.9M  1.8G    0%   /System/Volumes/Data",
+  "_meta": {
+    "collected_at": "2026-11-17T05:37:31",
+    "script_version": "1.0",
+    "python_running": "3.13.12",
+    "python_path": "/Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3"
+  }
+}

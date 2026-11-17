@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>一条龙控制台</title>
+<script src="marked.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1f2937;--sub:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue-bg:#eff6ff;--green:#059669;--green-bg:#ecfdf5;--red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;--amber-bg:#fffbeb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+.layout{display:flex;min-height:100vh}
+.side{width:200px;background:#fff;border-right:1px solid var(--line);padding:20px 12px;position:fixed;top:0;bottom:0;overflow:auto}
+.side h1{font-size:15px;padding:0 10px 14px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.side h1 small{display:block;color:var(--sub);font-size:11px;font-weight:400;margin-top:3px}
+.nav button{display:block;width:100%;text-align:left;padding:9px 12px;border:0;background:none;border-radius:8px;color:var(--ink);cursor:pointer;font-size:13px;margin-bottom:2px}
+.nav button:hover{background:var(--bg)}
+.nav button.active{background:var(--blue-bg);color:var(--blue);font-weight:600}
+.main{margin-left:200px;padding:28px 34px;max-width:1100px;width:100%}
+.panel{display:none}.panel.show{display:block}
+.panel h2{font-size:20px;margin-bottom:4px}
+.lead{color:var(--sub);margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.kv{background:var(--bg);border-radius:8px;padding:10px 12px}
+.kv .k{color:var(--sub);font-size:11px}.kv .v{font-weight:600;margin-top:2px;word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--sub);font-weight:600;background:var(--bg)}
+.btn{border:0;border-radius:8px;padding:8px 16px;background:var(--blue);color:#fff;cursor:pointer;font-size:13px;margin:2px 4px 2px 0}
+.btn:hover{opacity:.9}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.mini-btn{border:1px solid var(--line);background:#fff;color:var(--blue);border-radius:6px;padding:1px 7px;font-size:11px;cursor:pointer;flex-shrink:0}
+.mini-btn:hover{background:var(--blue-bg)}
+.copy-btn{border:0;background:var(--blue-bg);color:var(--blue);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer}
+.copy-btn:hover{background:#dbeafe}
+.tag{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px}
+.tag.ok{background:var(--green-bg);color:var(--green)}.tag.warn{background:var(--amber-bg);color:var(--amber)}.tag.bad{background:var(--red-bg);color:var(--red)}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;white-space:pre-wrap;font-size:12px}
+input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;color:var(--ink)}
+.doc h1,.doc h2,.doc h3{margin:16px 0 8px}.doc p,.doc li{margin:6px 0}.doc code{background:var(--bg);padding:1px 5px;border-radius:4px}
+.doc pre{background:var(--bg)}.doc table{margin:10px 0}
+.note{padding:12px 14px;border-radius:8px;border:1px solid var(--line);margin:10px 0}
+.spinner{color:var(--sub);font-size:12px}
+svg{background:#fff;border:1px solid var(--line);border-radius:8px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{padding:5px 12px;font-size:12px}
+#nav-toc{margin:0 0 8px;padding:6px 0;border-top:1px dashed var(--line)}
+#nav-toc .nd-name{display:block;width:100%;text-align:left;border:0;background:none;padding:4px 12px;font-size:12px;color:var(--sub);cursor:pointer;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nav-toc .nd-name:hover{background:var(--bg);color:var(--ink)}
+#nav-toc .nd-name.on{color:var(--blue);font-weight:600}
+#nav-toc .nd-name::before{content:'▸ ';font-size:10px}
+#nav-toc .nd-name.on::before{content:'▾ '}
+#nav-toc a{display:block;padding:3px 12px 3px 24px;font-size:11px;color:var(--sub);text-decoration:none;cursor:pointer;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nav-toc a:hover{background:var(--bg);color:var(--ink)}
+#nav-toc a.d3{padding-left:34px}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <h1 id="brand">一条龙控制台<small id="brandsub">加载中…</small></h1>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api=p=>fetch(p).then(r=>r.json());
+let META=null, IS_MAC=false;
+function copyText(t){
+  // 传 this（按钮元素）时从 data-cmd 取原文，避免把命令塞进 onclick 字符串引发引号/转义问题
+  if(t&&t.dataset&&Object.prototype.hasOwnProperty.call(t.dataset,'cmd')) t=t.dataset.cmd;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('已复制')).catch(()=>fbCopy(t));}
+  else fbCopy(t);
+}
+function fbCopy(t){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast('已复制');}catch(e){toast('复制失败');}a.remove();}
+function toast(msg){let t=$('toast');if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;z-index:99;opacity:0;transition:opacity .2s';document.body.appendChild(t);}t.textContent=msg;t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>t.style.opacity='0',1500);}
+function openPath(p){fetch('/api/open-path',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:p})}).then(r=>r.json()).then(d=>toast(d.msg||(d.ok?'已打开':'打开失败'))).catch(()=>toast('打开失败'));}
+
+const LABELS={status:'状态总览',info:'基础信息',pathtruth:'PATH 真相',envvars:'环境变量',
+  software:'软件状态',aitools:'AI 工具',servicesvc:'服务与端口',ports_live:'实时端口',processes:'关键进程',
+  test:'快速测试',doctor:'环境体检',cmdlib:'命令库',cache:'缓存管理',docs:'速查文档',
+  quiz:'记忆抽测',curve:'训练曲线',data:'数据速览',inspect:'产物解读',service:'推理服务'};
+let SECTIONS=[['status','状态总览']];
+const RENDER={status:renderStatus,info:renderInfo,pathtruth:renderPathTruth,envvars:renderEnvVars,
+  software:renderSoftware,aitools:renderAITools,servicesvc:renderServices,ports_live:renderPortsLive,processes:renderProcesses,
+  test:renderTest,doctor:renderDoctor,cmdlib:renderCmdLib,cache:renderCache,docs:renderDocs,
+  quiz:renderQuiz,curve:renderCurve,data:renderData,inspect:renderInspect,service:renderService};
+
+// —— 速查文档：标题 slug 与目录（左侧二级菜单与文档面板共用）——
+// GitHub 风格 slug：小写、去标点（含全角）、每个空白字符各转一个连字符
+const slug=t=>String(t).trim().toLowerCase()
+  .replace(/[./?%#^`{}"'<>=!:;,\\|*+~()\[\]（）【】《》、]/g,'')
+  .replace(/\s/g,'-');
+// 解析一篇文档的 h1~h3 标题（跳过代码块；重复 slug 按 GitHub 规则加 -1 后缀）
+function tocOf(doc){
+  if(doc.__toc)return doc.__toc;
+  const out=[];let inCode=false;const seen={};
+  doc.content.split('\n').forEach(line=>{
+    if(/^\s*```/.test(line)){inCode=!inCode;return;}
+    if(inCode)return;
+    const m=line.match(/^(#{1,3})\s+(.*?)\s*#*\s*$/);
+    if(!m)return;
+    const text=m[2].replace(/<[^>]*>/g,'').replace(/[*_`]/g,'');
+    let id=slug(text);seen[id]=(seen[id]||0)+1;
+    if(seen[id]>1)id+='-'+(seen[id]-1);
+    out.push({text,id,depth:m[1].length});
+  });
+  return doc.__toc=out;
+}
+let NAV_TOC_ACTIVE=-1;   // 左侧目录当前展开的文档下标
+async function buildNavToc(){
+  if(!META.sections.includes('docs'))return;
+  if(!window.__DOCS){const d=await api('/api/docs');window.__DOCS=d.docs||[];}
+  renderNavToc();
+}
+function renderNavToc(){
+  const el=$('nav-toc');if(!el)return;
+  const docs=window.__DOCS||[];
+  el.innerHTML=docs.map((x,i)=>{
+    const open=i===NAV_TOC_ACTIVE;
+    return `<button class="nd-name ${open?'on':''}" data-i="${i}" title="${esc(x.name)}">${esc(x.name)}</button>`
+      +(open?`<div>${tocOf(x).map(t=>`<a class="d${t.depth}" data-i="${i}" data-anchor="${esc(t.id)}">${esc(t.text)}</a>`).join('')}</div>`:'');
+  }).join('');
+  el.querySelectorAll('.nd-name').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    if(NAV_TOC_ACTIVE===i&&$('p-docs').classList.contains('show')){NAV_TOC_ACTIVE=-1;renderNavToc();return;}
+    NAV_TOC_ACTIVE=i;renderNavToc();docJump(i,null);
+  });
+  el.querySelectorAll('a').forEach(a=>a.onclick=()=>{
+    const i=+a.dataset.i;
+    NAV_TOC_ACTIVE=i;renderNavToc();docJump(i,a.dataset.anchor);
+  });
+}
+// 从左侧目录跳转：打开文档面板 → 切到对应文档 → 滚动到小节
+function docJump(i,anchor){
+  show('docs');
+  const go=()=>{
+    const b=document.querySelector(`#dtabs button[data-i="${i}"]`);
+    if(b)b.click();
+    if(anchor)setTimeout(()=>{
+      const t=$('dbody').querySelector(`[id="${CSS.escape(anchor)}"]`);
+      if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+    },0);
+  };
+  if($('dtabs'))go();else setTimeout(go,500);   // 首次打开面板需等 /api/docs 加载
+}
+
+async function init(){
+  META=await api('/api/meta');
+  IS_MAC=(META.platform||'')!=='win32';
+  document.title=META.name+' · 控制台';
+  $('brand').firstChild.textContent=META.name;
+  $('brandsub').textContent=META.desc||'';
+  if(Array.isArray(META.sections)&&META.sections.length){
+    SECTIONS=META.sections.map(k=>[k,LABELS[k]||k]);
+  }
+  $('nav').innerHTML=SECTIONS.map(([k,n])=>`<button data-k="${k}" class="${k==='status'?'active':''}">${n}</button>`).join('');
+  document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>show(b.dataset.k));
+  // 速查文档：左侧插入二级目录容器并动态填充
+  const docsBtn=document.querySelector('#nav button[data-k="docs"]');
+  if(docsBtn){docsBtn.insertAdjacentHTML('afterend','<div id="nav-toc"></div>');buildNavToc();}
+  $('main').innerHTML=SECTIONS.map(([k])=>`<section class="panel ${k==='status'?'show':''}" id="p-${k}"></section>`).join('');
+  show('status');
+}
+function show(k){
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.k===k));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  $('p-'+k).classList.add('show');
+  (RENDER[k]||(()=>{}))();
+}
+
+async function renderStatus(){
+  const el=$('p-status'); el.innerHTML='<div class="spinner">读取状态…</div>';
+  const d=await api('/api/status');
+  const kv=(k,v)=>`<div class="kv"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  el.innerHTML=`<h2>状态总览</h2><p class="lead">忘记时先看这一屏。${esc(META.desc)}</p>
+   <div class="card"><div class="grid">
+     ${kv('解释器',esc(d.interpreter)+(d.interpreter_exists?'':' <span class="tag bad">缺失</span>'))}
+     ${Object.entries(d.versions||{}).map(([k,v])=>kv(k,esc(v))).join('')}
+     ${d.cuda!==null&&d.cuda!==undefined?kv('GPU 加速',d.cuda?'可用':'不可用'):''}
+     ${d.gpu&&d.gpu!=='-'?kv('GPU',esc(d.gpu)):''}
+     ${kv('缓存目录',esc(d.cache))}
+     ${d.serve?kv('推理服务',d.serve.running?'<span class="tag ok">运行中</span>':'未运行'):''}
+   </div></div><div id="facts-box"></div>`;
+  // 主题自带的静态事实（关键路径 / 磁盘快照）——失败也不影响主状态展示
+  try{
+    const f=await api('/api/facts');
+    let html='';
+    if((f.paths||[]).length){
+      html+=`<div class="card"><h3>关键路径</h3><div class="grid">${f.paths.map(p=>
+        `<div class="kv"><div class="k">${esc(p.name)} ${p.exists?'<span class="tag ok">存在</span>':'<span class="tag bad">缺失</span>'}</div><div class="v" style="font-size:11px">${esc(p.path)}</div></div>`).join('')}</div></div>`;
+    }
+    if((f.disks||[]).length){
+      html+=`<div class="card"><h3>磁盘空间（采集快照）</h3><table><tr><th>盘符</th><th>可用</th><th>说明</th></tr>${f.disks.map(dk=>
+        `<tr><td>${esc(dk.drive)}</td><td>${esc(dk.free_gb)} GB</td><td>${esc(dk.note)}</td></tr>`).join('')}</table></div>`;
+    }
+    $('facts-box').innerHTML=html;
+  }catch(e){}
+}
+
+// ── 基础信息：版本 / 路径 / 配置 / 产物 / 端口 / 磁盘 一屏汇总 ──
+async function renderInfo(){
+  const el=$('p-info'); el.innerHTML='<div class="spinner">读取基础信息…</div>';
+  const [s,f]=await Promise.all([api('/api/status'),api('/api/facts')]);
+  const kv=(k,v)=>`<div class="kv"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const pathCard=(title,items)=>{
+    if(!(items||[]).length)return '';
+    return `<div class="card"><h3>${title}</h3><div class="grid">${items.map(x=>
+      `<div class="kv"><div class="k">${esc(x.name)} ${x.exists===true?'<span class="tag ok">存在</span>':x.exists===false?'<span class="tag bad">缺失</span>':''}</div>
+       <div class="v" style="font-size:11px;display:flex;align-items:center;gap:6px;justify-content:space-between">
+         <span style="flex:1">${esc(x.path)}</span>
+         ${x.exists!==false?`<button class="mini-btn" title="${IS_MAC?'在 Finder 中打开':'在资源管理器中打开'}" data-path="${esc(x.path)}" onclick="openPath(this.dataset.path)">打开</button>`:''}
+       </div>${x.note?`<div class="k" style="margin-top:4px">${esc(x.note)}</div>`:''}</div>`).join('')}</div></div>`;
+  };
+  el.innerHTML=`<h2>基础信息</h2><p class="lead">路径、版本、端口、配置与产物路径——查找anything先看这里，全部只读。</p>
+   <div class="card"><h3>版本与环境</h3><div class="grid">
+     ${kv('Web 地址','127.0.0.1:'+esc(s.web_port)+(s.web_port!==s.configured_port?` <span class="tag warn">配置端口 ${esc(s.configured_port)} 被占用</span>`:''))}
+     ${kv('解释器',esc(s.interpreter)+(s.interpreter_exists?'':' <span class="tag bad">缺失</span>'))}
+     ${Object.entries(s.versions||{}).map(([k,v])=>kv(k,esc(v))).join('')}
+     ${s.cuda!==null&&s.cuda!==undefined?kv('GPU 加速',s.cuda?'可用':'不可用'):''}
+     ${s.gpu&&s.gpu!=='-'?kv('GPU',esc(s.gpu)):''}
+   </div></div>
+   ${pathCard('配置文件路径',f.config_files)}
+   ${pathCard('产物 / 工作目录',f.products)}
+   ${pathCard('关键路径',f.paths)}
+   <div class="card"><h3>常用端口</h3><table><tr><th>端口</th><th>协议</th><th>用途</th><th>状态</th></tr>
+     ${(f.ports||[]).map(p=>`<tr><td>${esc(p.port)}</td><td>${esc(p.proto)}</td><td>${esc(p.use)}</td><td>${esc(p.state)}</td></tr>`).join('')}</table></div>
+   <div class="card"><h3>磁盘空间（采集快照）</h3><table><tr><th>盘符</th><th>可用</th><th>说明</th></tr>
+     ${(f.disks||[]).map(d=>`<tr><td>${esc(d.drive)}</td><td>${esc(d.free_gb)} GB</td><td>${esc(d.note)}</td></tr>`).join('')}</table></div>`;
+}
+
+// ── PATH 真相：where 实测命令解析，多候选/非预期预警 ──
+async function renderPathTruth(){
+  const el=$('p-pathtruth'); el.innerHTML='<div class="spinner">实测 PATH 解析…</div>';
+  let d={commands:[]}; try{ d=await api('/api/path-truth'); }catch(e){}
+  const rows=(d.commands||[]).map(c=>{
+    const effectiveHit=c.expect&&c.paths.length&&c.paths[0].toLowerCase().replace(/\//g,'\\').includes(c.expect.toLowerCase().replace(/\//g,'\\'));
+    const status=!c.paths.length?'<span class="tag bad">未找到</span>'
+      :(c.multi?'<span class="tag warn">多候选</span>':'<span class="tag ok">唯一</span>');
+    const exp=effectiveHit?'<span class="tag ok">生效=预期</span>'
+      :(c.expect?'<span class="tag bad">生效≠预期</span>':'<span class="tag">-</span>');
+    const list=c.paths.map((p,i)=>`<div style="font-size:11px;color:${i===0?'var(--ink)':'var(--sub)'}">
+      ${i===0?'<span class="tag ok">生效</span>':'　　　'} ${esc(p)}</div>`).join('');
+    return `<tr><td><strong>${esc(c.cmd)}</strong></td><td>${status} ${exp}<div class="k" style="margin-top:2px">${c.count} 个候选</div></td>
+      <td>${list}</td><td style="font-size:12px">${esc(c.note)}</td></tr>`;
+  }).join('');
+   let aiexe=''; try{ aiexe=((await api('/api/status')).interpreter)||''; }catch(e){}
+   el.innerHTML=`<h2>PATH 真相</h2><p class="lead">敲命令时系统实际调用的是<span class="tag ok">生效</span>那条（PATH 中第一个）。多候选、生效项≠AI/预期路径会标出——这正是本机最容易踩的坑。</p>
+   <div class="card"><table><tr><th>命令</th><th>判定</th><th>PATH 中所有匹配（自上而下，首个生效）</th><th>说明</th></tr>
+   ${rows||'<tr><td colspan="4">无配置</td></tr>'}</table></div>
+   <div class="note">想切换生效项：调整系统 PATH 顺序，或直接用完整路径调用${aiexe?`（AI 任务固定用 <code>${esc(aiexe)}</code>）`:'（AI 解释器路径见「状态总览」面板）'}。</div>`;
+}
+
+// ── 环境变量：只读展示 + 预期比对 ──
+async function renderEnvVars(){
+  const el=$('p-envvars'); el.innerHTML='<div class="spinner">读取环境变量…</div>';
+  let d={vars:[]}; try{ d=await api('/api/env-vars'); }catch(e){}
+  const rows=(d.vars||[]).map(v=>`<tr>
+    <td><strong>${esc(v.name)}</strong></td>
+    <td>${v.set?'<span class="tag ok">已设置</span>':'<span class="tag bad">未设置</span>'}</td>
+    <td style="font-size:12px;word-break:break-all">${esc(v.value||'（空）')}</td>
+    <td>${v.expect?(v.matched?'<span class="tag ok">符合</span>':'<span class="tag warn">不符</span>'):'<span class="tag">-</span>'}${v.expect?`<div class="k" style="margin-top:2px">期望：${esc(v.expect)}</div>`:''}</td>
+    <td style="font-size:12px">${esc(v.note)}</td></tr>`).join('');
+  el.innerHTML=`<h2>环境变量</h2><p class="lead">只读展示当前用户环境变量，与基线预期比对。下载失败/工具找不到时先来这里查。</p>
+   <div class="card"><table><tr><th>变量</th><th>状态</th><th>当前值</th><th>比对</th><th>说明</th></tr>
+   ${rows||'<tr><td colspan="5">无配置</td></tr>'}</table></div>`;
+}
+
+// ── 实时端口：psutil 扫 LISTENING + 冲突检测 ──
+async function renderPortsLive(){
+  const el=$('p-ports_live'); el.innerHTML='<div class="spinner">扫描监听端口…</div><div id="plout"></div>';
+  let d={}; try{ d=await api('/api/ports-live'); }catch(e){}
+  if(d.error){el.innerHTML=`<h2>实时端口</h2><div class="note" style="background:var(--red-bg)">${esc(d.error)}</div>`;return;}
+  const selfPid=(d.runtime&&d.runtime.pid)||null;
+  const tidCell=r=>{
+    if(r.threads===null||r.threads===undefined)return '<span class="k">—</span>';
+    const tids=r.tids||[];
+    if(!tids.length)return `<span class="tag">${r.threads} 线程</span>`;
+    const shown=tids.slice(0,8).join(', ');
+    const more=tids.length>8?` <span class="k">+${tids.length-8}…</span>`:'';
+    return `<span class="tag">${r.threads} 线程</span><div class="k" style="font-size:10px;max-width:220px;word-break:break-all">TID: ${shown}${more}${selfPid&&r.pid===selfPid?'（本控制台）':''}</div>`;};
+  const rows=(d.rows||[]).map(r=>`<tr>
+    <td><strong>${esc(r.port)}</strong>${r.conflict?' <span class="tag bad">冲突</span>':''}</td>
+    <td>${esc(r.ip)}</td><td>${esc(r.proc)} <span class="k">PID ${r.pid}</span></td>
+    <td>${tidCell(r)}</td>
+    <td>${r.known?`<span class="tag ok">${esc(r.use)}</span>`:'<span class="tag">其它</span>'}</td></tr>`).join('');
+  const conflictBox=(d.conflicts||[]).length?`<div class="note" style="background:var(--red-bg)">端口冲突：${d.conflicts.map(c=>'<strong>'+c+'</strong>').join('、')} 被多个进程监听，请排查。</div>`:'';
+  const nRows=(d.rows||[]).length, nRead=(d.rows||[]).filter(r=>r.threads!==null&&r.threads!==undefined).length;
+  const sandboxLike=nRead===0||(nRows>3&&nRead<=1);  // 只有自身进程可读=受限特征
+  const parents=(d.runtime&&d.runtime.parents)||[];
+  const inSandbox=parents.some(p=>/workbuddy/i.test(p||''));
+  const chain=esc((parents.slice(0,3).join(' → '))||'未知');
+  const envLine=parents.length?'<br><span class="k">当前运行环境：'+chain+'</span>':'';
+  const threadHint=sandboxLike
+    ?(inSandbox
+      ?'<div class="note" style="background:var(--amber-bg,rgba(255,193,7,.12))"><strong>线程信息大部分不可读</strong>：本控制台由 WorkBuddy 沙箱内启动，系统禁止读取其它进程的线程表，仅控制台自身进程可读；端口/PID/进程名来自 lsof 不受影响。<br>解决办法：在终端执行 <code>./env-web.sh</code>（或双击「启动Web控制台.command」）以正常环境启动。</div>'
+      :'<div class="note" style="background:var(--amber-bg,rgba(255,193,7,.12))"><strong>线程信息大部分不可读</strong>：当前控制台不是沙箱启动（父进程链：'+chain+'），但本机 macOS 系统对第三方进程的线程表访问有保护限制（psutil 被拒；ps 回退 '+(d.runtime&&d.runtime.ps_ok===false?'也被拒':'不可用')+'）。<br>说明：这属于系统安全限制，线程列仅控制台自身进程有数据，端口/PID/进程名不受影响。</div>')
+    :(nRead<nRows?'<br><span class="k">提示：个别进程线程信息不可读（系统进程或权限限制），显示 —。</span>':'');
+  el.innerHTML=`<h2>实时端口</h2><p class="lead">当前所有 LISTENING 端口（实时扫描，非快照）。线程数对所有进程可用（psutil 优先，被拒时回退 <code>ps -M</code>）；TID 线程号列表仅控制台自身进程能读取（macOS 对其它进程的线程 ID 有访问限制，显示「系统未提供」）。已知用途已标注；同端口被多进程监听会判为冲突。共 ${d.total||0} 个，其中已知 ${d.known_count||0} 个。${envLine}</p>
+   ${threadHint}
+   ${conflictBox}
+   <div class="card"><table><tr><th>端口</th><th>监听地址</th><th>进程</th><th>线程</th><th>用途</th></tr>
+   ${rows||'<tr><td colspan="5">无监听端口</td></tr>'}</table></div>`;
+}
+
+// ── 关键进程：检测残留 Web / 服务进程 ──
+async function renderProcesses(){
+  const el=$('p-processes'); el.innerHTML='<div class="spinner">扫描关键进程…</div>';
+  let d={processes:[]}; try{ d=await api('/api/processes'); }catch(e){}
+  const rows=(d.processes||[]).map(p=>`<tr>
+    <td>${p.pid}${p.is_self?' <span class="tag ok">当前</span>':''}</td>
+    <td>${esc(p.name)}</td><td>${esc(p.start)}</td>
+    <td style="font-size:11px;word-break:break-all">${esc(p.cmd)}</td></tr>`).join('');
+  const others=(d.processes||[]).filter(p=>!p.is_self).length;
+  el.innerHTML=`<h2>关键进程</h2><p class="lead">扫描命令行含 ${(d.keys||[]).map(k=>'<code>'+esc(k)+'</code>').join('、')} 的进程。重复启动时先来这里看是否有残留。</p>
+   ${others>1?`<div class="note" style="background:var(--amber-bg)">检测到 ${others} 个非当前 Web 相关进程——可能是残留的控制台，端口自愈会自动关闭本项目旧进程，也可手动结束。</div>`:''}
+   <div class="card"><table><tr><th>PID</th><th>进程名</th><th>启动时间</th><th>命令行</th></tr>
+   ${rows||'<tr><td colspan="4">未发现关键进程</td></tr>'}</table></div>`;
+}
+
+// ── 命令库：按场景分组，一键复制 ──
+async function renderCmdLib(){
+  const el=$('p-cmdlib'); el.innerHTML='<div class="spinner">加载命令库…</div>';
+  const f=await api('/api/facts').catch(()=>({}));
+  const groups=f.command_lib||[];
+  el.innerHTML=`<h2>常用命令库</h2><p class="lead">按场景分组，点「复制」直接拿走。仅提供文本，不自动执行——涉及系统服务的命令请看清说明。</p>
+   ${groups.map(g=>`<div class="card"><h3>${esc(g.group)}</h3><table>
+     <tr><th style="width:70%">命令</th><th>说明</th><th style="width:60px">操作</th></tr>
+     ${g.items.map(it=>`<tr><td><code style="font-size:12px;word-break:break-all">${esc(it.cmd)}</code></td>
+       <td style="font-size:12px">${esc(it.note)}</td>
+       <td><button class="copy-btn" data-cmd="${esc(it.cmd)}" onclick="copyText(this)">复制</button></td></tr>`).join('')}
+     </table></div>`).join('')||'<div class="note">无命令配置</div>'}`;
+}
+
+// ── 软件状态：实时版本 + 路径 + 启动命令 ──
+// ── AI 工具：本机 AI 助手/IDE 的版本、配置、记忆体、项目目录 ──
+async function renderAITools(){
+  const el=$('p-aitools'); el.innerHTML='<div class="spinner">读取 AI 工具…</div>';
+  let d={tools:[]}; try{ d=await api('/api/ai-tools'); }catch(e){}
+  const cards=(d.tools||[]).map(t=>{
+    const items=(t.items||[]).map(x=>`<div class="kv"><div class="k">${esc(x.name)} ${x.exists===true?'<span class="tag ok">存在</span>':x.exists===false?'<span class="tag bad">缺失</span>':''}</div>
+      <div class="v" style="font-size:11px;display:flex;align-items:center;gap:6px;justify-content:space-between">
+        <span style="flex:1">${esc(x.path)}</span>
+        ${x.exists!==false&&x.path?`<button class="mini-btn" title="${IS_MAC?'在 Finder 中打开':'在资源管理器中打开'}" data-path="${esc(x.path)}" onclick="openPath(this.dataset.path)">打开</button>`:''}
+      </div>${x.note?`<div class="k" style="margin-top:2px">${esc(x.note)}</div>`:''}</div>`).join('');
+    return `<div class="card"><h3>${esc(t.name)} <span class="tag">${esc(t.version||'-')}</span>${t.size?` <span class="k">占用 ${esc(t.size)}</span>`:''}
+      ${t.app_exists===false?' <span class="tag bad">应用缺失</span>':''}</h3>
+      <div class="kv"><div class="k">应用</div><div class="v" style="font-size:11px">${esc(t.app||'-')}</div></div>
+      <div class="kv"><div class="k">主目录</div><div class="v" style="font-size:11px">${esc(t.home||'-')}</div></div>
+      ${items}
+      ${t.note?`<div class="k" style="margin-top:6px">💡 ${esc(t.note)}</div>`:''}</div>`;
+  }).join('');
+  el.innerHTML=`<h2>AI 工具</h2><p class="lead">本机 AI 助手/IDE 的关键信息：版本、配置文件、记忆体、项目目录——排查「它把数据放在哪、占了多少」先看这里。</p>
+    ${cards||'<div class="card">无数据：config.py 的 facts.ai_tools 未配置（Windows 侧按实际安装补充）</div>'}`;
+}
+
+async function renderSoftware(){
+  const el=$('p-software'); el.innerHTML='<div class="spinner">读取软件状态…</div>';
+  let d={software:[]}, svc={};
+  try{ d=await api('/api/software'); }catch(e){}
+  // 关联「服务与端口」面板：同一条目在两处显示一致（软件名 → svc key）
+  try{ const s=await api('/api/services');
+    (s.services||[]).forEach(x=>{svc[String(x.svc||'').toLowerCase()]=x.state;});
+  }catch(e){}
+  const SVC_OF={'ollama':'ollama','uu远程 gameviewer':'uuremote','tailscale':'tailscale','homebrew':'brew','kulicloud':'kulicloud'};
+  const svcBadge=n=>{const k=SVC_OF[String(n).toLowerCase()];
+    if(!k||!(k in svc))return '<span class="k">—</span>';
+    const running=/running/i.test(svc[k]);
+    return `<span class="tag ${running?'ok':'warn'}">${esc(svc[k])}</span> <span class="k">见「服务与端口」</span>`;};
+  const cats={}; (d.software||[]).forEach(s=>{(cats[s.category]=cats[s.category]||[]).push(s);});
+  const row=s=>`<tr>
+     <td>${esc(s.name)}</td>
+     <td>${s.version?esc(s.version):(s.category==='未安装'?'<span class="tag bad">未安装</span>':'<span class="tag warn">未探测</span>')}</td>
+     <td>${s.available?'<span class="tag ok">可用</span>':(s.path_exists===false?'<span class="tag bad">路径缺失</span>':'<span class="tag warn">未知</span>')}</td>
+     <td>${svcBadge(s.name)}</td>
+     <td style="font-size:11px">${esc(s.path||'-')}</td>
+     <td>${s.start?`<code>${esc(s.start)}</code> <button class="copy-btn" data-cmd="${esc(s.start)}" onclick="copyText(this)">复制</button>`:'-'}</td>
+     <td>${esc(s.note)}</td></tr>`;
+  el.innerHTML=`<h2>软件状态</h2><p class="lead">版本实时探测；状态/路径/启动命令来自配置。未安装项单独标注。常驻服务（Ollama / UU远程 / Tailscale 等）在此显示实时运行徽标，启停操作到「服务与端口」面板——两面板数据同源、互为补充，故不合并。</p>
+   ${Object.entries(cats).map(([cat,items])=>`<div class="card"><h3>${esc(cat)} <span class="tag">${items.length}</span></h3>
+     <table><tr><th>软件</th><th>版本</th><th>状态</th><th>运行</th><th>路径</th><th>启动/验证命令</th><th>备注</th></tr>
+     ${items.map(row).join('')}</table></div>`).join('')||'<div class="note">无软件配置</div>'}`;
+}
+
+// ── 快速测试：只读自检 ──
+async function renderTest(){
+  const el=$('p-test');   const TEST_ITEMS=[
+    ['1','AI 解释器','检查 Python 解释器（AI 环境）是否存在，缺失会判 FAIL'],
+    ['2','关键路径','逐个核对配置中全部关键目录/文件的存在性，任一缺失判 FAIL'],
+    ['3','版本探测','实时探测各软件版本（python/node/go/git 等），有探测失败判 FAIL'],
+    ['4','GPU 加速','检查 CUDA/MPS 加速是否可用（仅报告，不影响通过数）'],
+    ['5','Web 服务','检查本控制台自身端口 127.0.0.1 连通性，不通判 FAIL'],
+    ['6','常用端口连通','只读探测常用服务端口（如 3306/6379/11434），结果仅 INFO 展示，不判失败'],
+    ['7','配置文件','报告配置文件组的存在数量，有缺失时 WARN 不判失败'],
+    ['8','产物路径','报告产物目录组的存在数量，有缺失时 WARN 不判失败'],
+  ];
+  el.innerHTML=`<h2>快速测试</h2><p class="lead">一键跑一组只读自检，不改动任何系统设置。共 ${TEST_ITEMS.length} 项：</p>
+   <div class="card" style="margin-bottom:14px">
+     <table><tr><th style="width:36px">#</th><th style="width:130px">项目</th><th>检查内容与判定规则</th></tr>
+     ${TEST_ITEMS.map(t=>`<tr><td>${t[0]}</td><td><strong>${t[1]}</strong></td><td style="font-size:12px">${t[2]}</td></tr>`).join('')}
+     </table>
+     <div class="note" style="margin-top:10px">结果标记：<span class="tag ok">PASS</span> 通过 · <span class="tag warn">WARN</span> 提示（不判失败）· <span class="tag bad">FAIL</span> 失败 · <span class="tag">INFO</span> 仅展示</div>
+   </div>
+   <button class="btn" id="testbtn">开始自检</button><div id="testout"></div>`;
+  $('testbtn').onclick=async()=>{
+    $('testout').innerHTML='<div class="spinner">检测中…（版本探测已缓存，通常几秒内）</div>';
+    try{
+      const d=await api('/api/test');
+      const badge=x=>({'PASS':'<span class="tag ok">PASS</span>','WARN':'<span class="tag warn">WARN</span>',
+        'FAIL':'<span class="tag bad">FAIL</span>','INFO':'<span class="tag">INFO</span>'}[x.status]||esc(x.status));
+      $('testout').innerHTML=`<div class="card" style="margin-top:14px">
+        <div style="margin-bottom:10px"><strong>结果：${d.passed} 通过 / ${d.failed} 失败</strong></div>
+        <table><tr><th>项目</th><th>结果</th><th>详情</th></tr>
+        ${(d.results||[]).map(x=>`<tr><td>${esc(x.name)}</td><td>${badge(x)}</td><td style="font-size:12px">${esc(x.detail)}</td></tr>`).join('')}
+        </table></div>`;
+    }catch(e){ $('testout').innerHTML=`<div class="note" style="background:var(--red-bg)">自检失败：${esc(e.message)}</div>`; }
+  };
+}
+
+async function renderDoctor(){
+  const el=$('p-doctor');
+  el.innerHTML=`<h2>环境体检</h2><p class="lead">一键检查环境是否健康；下方「Web 显示同步」实时核对各面板内容与实机是否一致。</p>
+    <button class="btn" id="docbtn">开始体检（CLI doctor）</button><div id="docout"></div><div id="wsync"></div>`;
+  $('docbtn').onclick=async()=>{
+    $('docout').innerHTML='<div class="spinner">体检中…</div>';
+    const d=await api('/api/doctor');
+    $('docout').innerHTML=`<pre>${esc(d.text)}</pre>`;
+  };
+  // Web 显示同步检查（自动加载）
+  const box=$('wsync'); box.innerHTML='<div class="spinner">核对 Web 显示与实机…</div>';
+  try{
+    const d=await api('/api/web-sync');
+    const groups=[...new Set(d.checks.map(c=>c.group))];
+    const rows=groups.map(g=>{
+      const items=d.checks.filter(c=>c.group===g).map(c=>
+        `<div class="kv"><div class="k">${c.ok?'<span class="tag ok">✓</span>':'<span class="tag bad">✗</span>'} ${esc(c.name)}</div>
+         ${c.ok?'':`<div class="v" style="font-size:11px;color:var(--red)">${esc(c.detail)}</div>`}</div>`).join('');
+      return `<div class="card"><h3>${esc(g)}</h3>${items}</div>`;
+    }).join('');
+    const summary=d.failed===0
+      ?`<span class="tag ok">全部通过（${d.passed} 项）</span>`
+      :`<span class="tag bad">${d.failed} 项不一致</span> <span class="tag ok">${d.passed} 项通过</span>`;
+    box.innerHTML=`<h3 style="margin:14px 0 8px">Web 显示同步 ${summary}</h3>${rows}`;
+  }catch(e){
+    box.innerHTML='<div class="note" style="background:var(--red-bg)">同步检查失败：'+esc(String(e))+'</div>';
+  }
+}
+
+async function renderQuiz(){
+  const el=$('p-quiz'); el.innerHTML='<div class="spinner">加载题库…</div>';
+  const d=await api('/api/quiz/questions');
+  if(d.error){el.innerHTML=`<div class="note" style="background:var(--red-bg)">题库加载失败：${esc(d.error)}</div>`;return;}
+  let pool=d.questions.slice(), i=0, right=0, cur=null, answered=false;
+  const topics=`<div class="tabs"><button class="btn ghost tbtn" data-t="ALL">全部 (${d.total})</button>${
+    Object.entries(d.topics).map(([t,n])=>`<button class="btn ghost tbtn" data-t="${esc(t)}">${esc(t)} (${n})</button>`).join('')}</div>`;
+  el.innerHTML=`<h2>记忆抽测</h2><p class="lead">先答再看详解，主动回忆比反复读更有效。共 ${d.total} 题。</p>
+    ${topics}<div class="card" id="qbox"></div><div id="qres"></div>`;
+  document.querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>{
+    pool=b.dataset.t==='ALL'?d.questions.slice():d.questions.filter(q=>q.t===b.dataset.t);
+    pool.sort(()=>Math.random()-.5); i=0;right=0;next();
+  });
+  function next(){
+    answered=false;
+    if(i>=pool.length){$('qbox').innerHTML=`<strong>完成！正确 ${right}/${pool.length}</strong>`;return;}
+    cur=pool[i++];
+    $('qbox').innerHTML=`<div class="tag ok">${esc(cur.t)}</div><h3 style="margin:10px 0">${esc(cur.q)}</h3>
+      <input id="qin" placeholder="输入答案，回车提交（不会就留空）" style="width:100%">
+      <div style="margin-top:10px"><button class="btn" id="qsub">提交</button></div><div id="qfb"></div>`;
+    $('qsub').onclick=check; $('qin').onkeydown=e=>{if(e.key==='Enter')check();};
+  }
+  function check(){
+    if(answered)return; answered=true;
+    const ans=$('qin').value.trim();
+    const hit=ans&&(cur.k||[]).some(k=>ans.toLowerCase().includes(String(k).toLowerCase()));
+    if(hit)right++;
+    $('qfb').innerHTML=`<div class="note" style="background:${hit?'var(--green-bg)':'var(--red-bg)'}">
+      ${hit?'<strong>答对了</strong>':`<strong>参考答案：${esc(cur.a)}</strong>`}
+      <div style="margin-top:6px;color:var(--sub)">详解：${esc(cur.d||'')}</div></div>
+      <button class="btn" id="qnext">下一题 →</button>`;
+    $('qnext').onclick=next;
+  }
+  pool.sort(()=>Math.random()-.5); next();
+}
+
+async function renderCurve(){
+  const el=$('p-curve'); el.innerHTML='<div class="spinner">读取训练历史…</div>';
+  const d=await api('/api/curve');
+  if(d.error){el.innerHTML=`<h2>训练曲线</h2><div class="note" style="background:var(--amber-bg)">${esc(d.error)}：${esc(d.path||'')}</div>`;return;}
+  el.innerHTML='<h2>训练曲线</h2><p class="lead">来自真实训练日志。</p><div id="charts"></div>';
+  const series=Object.entries(d.series||{}).filter(([,v])=>v.length);
+  if(!series.length){$('charts').innerHTML='<div class="note">暂无可绘制的数据</div>';return;}
+  $('charts').innerHTML=series.map(([name,pts],i)=>svgChart(name,pts,i)).join('');
+}
+function svgChart(name,pts,idx){
+  const W=640,H=300,pad=36;
+  const ys=pts.map(p=>p.y),lo=Math.min(...ys),hi=Math.max(...ys),span=hi-lo||1;
+  const xy=pts.map((p,i)=>[pad+i/Math.max(pts.length-1,1)*(W-2*pad), H-pad-(p.y-lo)/span*(H-2*pad)]);
+  const line=xy.map(p=>p.join(',')).join(' ');
+  const area=`${pad},${H-pad} ${line} ${W-pad},${H-pad}`;
+  const col=['#2563eb','#dc2626','#16a34a','#d97706'][idx%4];
+  const ticks=xy.filter((_,i)=>i%Math.max(1,Math.floor(pts.length/6))===0)
+    .map((p,i)=>`<text x="${p[0]}" y="${H-12}" font-size="10" fill="#6b7280" text-anchor="middle">${esc(pts[Math.floor(i*Math.max(1,Math.floor(pts.length/6)))].x)}</text>`).join('');
+  return `<div class="card"><h3>${esc(name)}</h3>
+  <svg viewBox="0 0 ${W} ${H}" width="100%"><polygon points="${area}" fill="${col}" opacity="0.08"/>
+  <polyline points="${line}" fill="none" stroke="${col}" stroke-width="2"/>
+  <text x="${pad}" y="20" font-size="11" fill="#6b7280">${hi.toFixed(4)}</text>
+  <text x="${pad}" y="${H-pad+16}" font-size="11" fill="#6b7280">${lo.toFixed(4)}</text>${ticks}</svg></div>`;
+}
+
+async function renderData(){
+  const el=$('p-data'); el.innerHTML='<div class="spinner">读取数据…</div>';
+  const d=await api('/api/data');
+  el.innerHTML=`<h2>数据速览</h2><p class="lead">测试输入长什么样、标签什么意思、各集多少条。</p>
+  <div class="card"><table><tr><th>文件</th><th>记录数</th><th>基线</th><th>列名</th></tr>
+  ${(d.files||[]).map(f=>`<tr><td>${esc(f.name)}</td><td>${f.count??'缺失'}</td><td>${f.expect??'-'}</td><td>${esc(f.columns)}</td></tr>`).join('')}</table></div>
+  <div class="card"><h3>标签含义</h3><p>${esc(d.label_note||'')}</p>
+  ${d.labels?`<pre>${esc(JSON.stringify(d.labels))}</pre>`:''}</div>`;
+}
+
+async function renderInspect(){
+  const el=$('p-inspect'); el.innerHTML='<div class="spinner">读取产物…</div>';
+  const d=await api('/api/inspect');
+  el.innerHTML=`<h2>产物解读</h2><p class="lead">每个产物文件什么意思 + 真实指标。</p>
+  <div class="card"><table><tr><th>文件</th><th>大小</th><th>含义</th></tr>
+  ${(d.files||[]).map(f=>`<tr><td>${esc(f.name)}</td><td>${f.size_mb!=null?f.size_mb+' MB':'-'}</td><td>${esc(f.meaning)}</td></tr>`).join('')}</table></div>
+  ${Object.entries(d.metrics||{}).map(([k,v])=>`<div class="card"><h3>${esc(k)}</h3><pre>${esc(JSON.stringify(v,null,2))}</pre></div>`).join('')}`;
+}
+
+async function renderCache(){
+  const el=$('p-cache'); el.innerHTML='<div class="spinner">读取缓存占用…</div>';
+  const d=await api('/api/cache');
+  el.innerHTML=`<h2>缓存管理</h2><p class="lead">查看占用；清理需二次确认。</p>
+  <div class="card">${(d.items||[]).map(it=>`<div class="kv" style="margin-bottom:10px">
+    <div class="v">${esc(it.name)} · ${it.size_mb!=null?it.size_mb+' MB':'不存在'} 
+    <span class="tag ${it.safe?'ok':'warn'}">${it.safe?'可清理':'谨慎'}</span></div>
+    <div class="k">${esc(it.path)}</div>${it.note?`<div class="k">${esc(it.note)}</div>`:''}</div>`).join('')}</div>
+  <button class="btn ghost" id="cln">清理可安全项</button><div id="clnout"></div>`;
+  $('cln').onclick=async()=>{
+    if(!confirm('确定删除所有标记为"可清理"的缓存/checkpoint？此操作不可撤销。'))return;
+    const r=await api('/api/cache/clean');
+    $('clnout').innerHTML=`<div class="note" style="background:var(--green-bg)">已清理：${esc((r.cleaned||[]).join('、')||'无')}</div>`;
+    renderCache();
+  };
+}
+
+async function renderService(){
+  const el=$('p-service');
+  el.innerHTML=`<h2>推理服务</h2><p class="lead">点按钮启停服务，直接发预测请求。</p>
+  <div class="card"><button class="btn" id="sstart">启动服务</button><button class="btn ghost" id="sstop">停止</button>
+  <span id="smsg"></span></div>
+  <div class="card"><h3>发一个预测</h3><textarea id="ptext" rows="3" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px" placeholder="输入待预测文本"></textarea>
+  <button class="btn" id="ppred" style="margin-top:8px">预测</button><div id="pout"></div></div>`;
+  $('sstart').onclick=async()=>{
+    $('smsg').textContent='启动中…';
+    const r=await api('/api/serve',{});
+    $('smsg').textContent=r.ok?`已启动 PID=${r.pid} 端口=${r.port}`:`失败：${r.msg}`;
+  };
+  $('sstop').onclick=async()=>{const r=await api('/api/stop',{});$('smsg').textContent=r.ok?'已停止':'停止失败';};
+  $('ppred').onclick=async()=>{
+    const text=$('ptext').value.trim(); if(!text){$('pout').innerHTML='<div class="note">请输入文本</div>';return;}
+    $('pout').innerHTML='<div class="spinner">预测中…</div>';
+    try{
+      const r=await fetch(META.serve_predict||'http://127.0.0.1:5000/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      const d=await r.json();
+      $('pout').innerHTML=`<div class="note" style="background:var(--green-bg)"><strong>结果：${esc(d.prediction??JSON.stringify(d))}</strong>${d.confidence!=null?' · 置信度 '+esc(d.confidence):''}</div>`;
+    }catch(e){$('pout').innerHTML=`<div class="note" style="background:var(--red-bg)">预测失败：${esc(e.message)}。服务启动了吗？</div>`;}
+  };
+}
+
+async function renderServices(){
+  const el=$('p-servicesvc');
+  el.innerHTML='<div class="spinner">查询服务状态…</div>';
+  let d={services:[],ports:[],facts:{}};
+  try{ d=await api('/api/services'); }catch(e){}
+  let ports=[];
+  try{ const f=await api('/api/facts'); ports=f.ports||[]; }catch(e){}
+  const svcRows=(d.services||[]).map((s,i)=>{
+    const running=/running/i.test(s.state);
+    const tag=`<span class="tag ${running?'ok':'bad'}">${esc(s.state)}</span>`;
+    const btns=`<button class="btn ghost svcbtn" data-i="${i}" data-action="start">启动</button>
+      <button class="btn ghost svcbtn" data-i="${i}" data-action="stop">停止</button>`;
+    return `<tr><td>${esc(s.name)}<div class="k">${esc(s.svc)}</div></td><td>${tag}</td>
+      <td>${esc(s.expect)}</td><td><code>${esc(s.start)}</code></td><td>${btns}</td><td>${esc(s.note)}</td></tr>`;
+  }).join('');
+  const portRows=(ports||[]).map(p=>`<tr><td>${esc(p.port)}</td><td>${esc(p.proto)}</td><td>${esc(p.use)}</td><td>${esc(p.state)}</td></tr>`).join('');
+  el.innerHTML=`<h2>服务与端口</h2>
+   <p class="lead">${IS_MAC?'常驻服务/进程实时探测（按 config 配置的 probe 命令实测）；启停走各服务配置的命令；端口来自事实源快照。':'Windows 服务状态实时查询；可一键启停（需管理员权限，失败会给出手动命令）；端口来自事实源快照。'}</p>
+   <div class="card"><h3>${IS_MAC?'服务与常驻进程':'Windows 服务'}</h3><table>
+     <tr><th>软件</th><th>当前状态</th><th>预期</th><th>启动命令</th><th>操作</th><th>备注</th></tr>
+     ${svcRows||'<tr><td colspan="6">无服务配置</td></tr>'}</table>
+     <div id="svcmsg"></div>
+     <p class="k" style="margin-top:10px">${IS_MAC?'提示：brew 托管服务用 <code>brew services list</code> 查看；LaunchAgents 用 <code>launchctl list | grep -i &lt;名&gt;</code> 查询；表中启停按钮按 config 配置的命令执行，失败会显示手动命令。':'提示：本机 Web 控制台以普通权限运行，net start/stop 系统会因权限失败——届时会显示管理员命令供复制执行。也可用 <code>services.msc</code> 图形界面操作。'}</p></div>
+   <div class="card"><h3>常用端口</h3><table>
+     <tr><th>端口</th><th>协议</th><th>用途</th><th>状态</th></tr>${portRows||'<tr><td colspan="4">无端口数据</td></tr>'}</table></div>`;
+  document.querySelectorAll('.svcbtn').forEach(b=>b.onclick=async()=>{
+    const s=d.services[+b.dataset.i], act=b.dataset.action;
+    if(!confirm(`确定要 ${act==='start'?'启动':'停止'} 服务「${s.name}」(${s.svc}) 吗？`))return;
+    $('svcmsg').innerHTML='<div class="spinner">提交中…</div>';
+    try{
+      const r=await fetch('/api/service/action',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({svc:s.svc,action:act})}).then(x=>x.json());
+      $('svcmsg').innerHTML=`<div class="note" style="background:${r.ok?'var(--green-bg)':'var(--amber-bg)'}">
+        ${r.ok?'操作成功':'未成功'}：${esc(r.msg).replace(/\n/g,'<br>')}</div>`;
+      if(r.ok)setTimeout(renderServices,1500);
+    }catch(e){ $('svcmsg').innerHTML=`<div class="note" style="background:var(--red-bg)">请求失败：${esc(e.message)}</div>`; }
+  });
+}
+
+async function renderDocs(){
+  const el=$('p-docs'); el.innerHTML='<div class="spinner">加载文档…</div>';
+  if(!window.__DOCS){const d=await api('/api/docs');window.__DOCS=d.docs||[];}
+  const docs=window.__DOCS;
+  if(!docs.length){el.innerHTML='<h2>速查文档</h2><div class="note">未在配置的 notes 目录找到 .md 文档。</div>';if($('nav-toc'))$('nav-toc').innerHTML='';return;}
+  el.innerHTML=`<h2>速查文档</h2><p class="lead">共 ${docs.length} 份。可搜索、切换；左侧「速查文档」下有各文档的目录树可跳转。</p>
+   <input id="dsearch" placeholder="搜索文档内容…" style="width:100%;margin-bottom:12px">
+   <div class="tabs" id="dtabs">${docs.map((x,i)=>`<button class="btn ghost ${i===0?'active':''}" data-i="${i}">${esc(x.name)}</button>`).join('')}</div>
+   <div class="card doc" id="dbody"></div>`;
+  // 标题 id 兜底：不依赖 marked 版本的 renderer 行为，渲染后统一按 slug 补齐（与左侧目录同一规则）
+  const render=i=>{let c=docs[i].content;const q=$('dsearch').value.trim();
+    if(q){const re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');c=c.replace(re,'<mark>$1</mark>');}
+    $('dbody').innerHTML=window.marked?marked.parse(c):`<pre>${esc(c)}</pre>`;
+    $('dbody').querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(h=>{
+      h.id=slug(h.textContent.replace(/[*_`]/g,''));});};
+  const jump=i=>{document.querySelectorAll('#dtabs button').forEach(x=>x.classList.remove('active'));
+    const b=document.querySelector(`#dtabs button[data-i="${i}"]`);
+    if(b)b.classList.add('active');
+    $('dsearch').value='';render(i);
+    NAV_TOC_ACTIVE=i;renderNavToc();};
+  // 链接接管：# 锚点平滑滚动；.md 链接切换到对应文档（避免 404）
+  $('dbody').addEventListener('click',e=>{
+    const a=e.target.closest('a'); if(!a) return;
+    const href=a.getAttribute('href')||'';
+    if(href.startsWith('#')){
+      e.preventDefault();
+      const key=decodeURIComponent(href.slice(1));
+      const t=$('dbody').querySelector(`[id="${CSS.escape(key)}"]`);
+      if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+      else toast('未找到小节：'+href);
+    }else if(/\.md($|\?|#)/i.test(href)){
+      e.preventDefault();
+      const name=decodeURIComponent(href).replace(/\.md($|\?|#).*$/i,'').split('/').pop();
+      const idx=docs.findIndex(x=>x.name===name);
+      if(idx>=0)jump(idx); else toast('未找到文档：'+name);
+    }
+  });
+  const init0=NAV_TOC_ACTIVE>=0&&NAV_TOC_ACTIVE<docs.length?NAV_TOC_ACTIVE:0;
+  document.querySelectorAll('#dtabs button').forEach(x=>x.classList.toggle('active',+x.dataset.i===init0));
+  render(init0);
+  document.querySelectorAll('#dtabs button').forEach(b=>b.onclick=()=>{jump(+b.dataset.i);});
+  $('dsearch').oninput=()=>render(+document.querySelector('#dtabs button.active').dataset.i);
+  renderNavToc();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+=== 系统 ===
+macOS 26.6.2  架构 arm64  芯片 Apple M2
+内存 24.0GB  核心数 8  型号 Mac14,2
+根分区: /dev/disk3s1s1   460Gi    12Gi   168Gi     7%    459k  1.8G    0%   /
+
+=== 开发工具 ===
+  python3          /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3 Python 3.13.12
+  python           /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python 
+  pip3             /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/pip3 pip 26.0 from /Users/masc/.workbuddy/binaries/python/version
+  conda            /Users/masc/miniconda3/bin/conda              conda 26.3.2
+  git              /opt/homebrew/bin/git                         git version 2.51.2
+  node             /Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/node v22.22.2
+  npm              /Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npm 10.9.7
+  npx              /Users/masc/.workbuddy/binaries/node/versions/22.22.2-6/bin/npx 10.9.7
+  java             /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/java openjdk version "17.0.17" 2025-10-21
+  javac            /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home/bin/javac javac 17.0.17
+  mvn              /opt/homebrew/bin/mvn                         Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a
+  gradle           未安装
+  docker           未安装
+  docker-compose   未安装
+  mysql            未安装
+  redis-server     未安装
+  nginx            未安装
+  go               /opt/homebrew/bin/go                          go version go1.26.4 darwin/arm64
+  rustc            未安装
+  cargo            未安装
+  code             未安装
+  brew             /opt/homebrew/bin/brew                        Homebrew 5.0.8
+  tail             /Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin/tail 
+  curl             /usr/bin/curl                                 
+  wget             未安装
+  ssh              /usr/bin/ssh                                  
+  ffmpeg           /opt/homebrew/bin/ffmpeg                      ffmpeg version 8.1.2 Copyright (c) 2000-2026 the FFmpeg deve
+  ollama           /usr/local/bin/ollama                         ollama version is 0.40.16
+  deno             /opt/homebrew/bin/deno                        deno 2.8.3 (stable, release, aarch64-apple-darwin)
+  uv               未安装
+  tailscale        /usr/local/bin/tailscale                      1.104.7
+
+=== Python 环境 ===
+  /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3 v3.13.12  [-]
+  /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python3 v3.13.12  [-]
+  /Users/masc/miniconda3/bin/python3                 v3.13.13  [requests]
+  /opt/homebrew/bin/python3                          v3.14.6   [-]
+  /usr/bin/python3                                   v3.9.6    [requests]
+  /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python v3.13.12  [-]
+  /Users/masc/.workbuddy/binaries/python/versions/3.13.12/bin/python v3.13.12  [-]
+  /Users/masc/miniconda3/bin/python                  v3.13.13  [requests]
+  conda env list:
+    base                 *   /Users/masc/miniconda3
+    llm                      /Users/masc/miniconda3/envs/llm
+    pytorch                  /Users/masc/miniconda3/envs/pytorch
+    /Users/masc/study/AI/codex_v1/transformers-finetune-lab/.conda
+
+=== Homebrew ===
+  prefix=/opt/homebrew  formula=72个  cask=2个
+  formulas: ada-url, aria2, brotli, c-ares, ca-certificates, cairo, certifi, dav1d, deno, duti, ffmpeg, fmt, fontconfig, freetype, gettext, giflib, git, glib, go, graphite2, harfbuzz, hdrhistogram_c, icu4c@77, icu4c@78, jpeg-turbo, lame, libnghttp2, libnghttp3, libngtcp2, libpng, libssh2, libtiff, libunistring, libuv, libvmaf, libvpx, libx11, libxau, libxcb, libxdmcp, libxext, libxrender, little-cms2, llhttp, lz4, lzo, maven, merve, mpdecimal, nbytes, node, openjdk, openjdk@17, openssl@3, opus, pcre2, pixman, python@3.14, readline, sdl2-compat, sdl3, simdjson, simdutf, sqlite, svt-av1, uvwasi, x264, x265, xorgproto, xz, yt-dlp, zstd
+  casks: mark-text, mos
+
+=== 用户 LaunchAgents(自启动) ===
+  jetbrains.vmoptions.plist, com.google.keystone.xpcservice.plist, com.google.keystone.agent.plist, com.hitooler.filefinder.plist, org.freedownloadmanager.fdm6.plist, com.valvesoftware.steamclean.plist, com.google.GoogleUpdater.wake.plist
+
+=== 监听端口 ===
+  :  7000 pid=620 ControlCe
+  :  7000 pid=620 ControlCe
+  :  5000 pid=620 ControlCe
+  :  5000 pid=620 ControlCe
+  : 49152 pid=639 rapportd
+  : 49152 pid=639 rapportd
+  : 59869 pid=785 logioptio
+  : 49153 pid=809 Ollama
+  : 11434 pid=842 ollama
+  : 56352 pid=860 UURemote
+  : 56353 pid=860 UURemote
+  : 49267 pid=1033 LogiPlugi
+  : 49269 pid=1033 LogiPlugi
+  : 49270 pid=1033 LogiPlugi
+  :  7892 pid=2963 KuliCloud
+  : 18488 pid=13493 Electron
+  : 54427 pid=13591 Electron
+  : 53287 pid=13591 Electron
+  : 53290 pid=13591 Electron
+  : 53302 pid=13643 node
+  : 54443 pid=16000 sandbox-c
+  : 39099 pid=16007 editor_sd
+  : 51070 pid=44982 Electron
+  : 51510 pid=45867 sandbox-c
+  : 52565 pid=48720 Code\x20H
+  : 52688 pid=48721 Code\x20H
+  : 52735 pid=48721 Code\x20H
+  : 11435 pid=48872 python3.1
+  : 36510 pid=48938 Lingma
+  : 37820 pid=48938 Lingma
+  : 37510 pid=48938 Lingma
+  :  8010 pid=49988 python3.1
+  : 53490 pid=50743 node
+
+=== 关键配置文件 ===
+  [有] git_global: /Users/masc/.gitconfig
+  [有] zshrc: /Users/masc/.zshrc
+  [有] zprofile: /Users/masc/.zprofile
+  [有] bash_profile: /Users/masc/.bash_profile
+  [有] ssh_config: /Users/masc/.ssh/config
+  [无] npmrc: /Users/masc/.npmrc
+  [无] condarc: /Users/masc/.condarc
+  [无] docker_daemon: /Users/masc/.docker/daemon.json
+  [有] maven_settings(常见位): /Users/masc/.m2/settings.xml
+  [无] gradle(常见位): /Users/masc/.gradle/gradle.properties
+
+=== 环境变量 ===
+  PATH = /Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin
+  HOME = /Users/masc
+  SHELL = /bin/zsh
+  USER = masc
+  LANG = C.UTF-8
+  JAVA_HOME = /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+  MAVEN_HOME = (未设置)
+  M2_HOME = (未设置)
+  GRADLE_HOME = (未设置)
+  CONDA_PREFIX = /Users/masc/miniconda3
+  NVM_DIR = (未设置)
+  PYENV_ROOT = (未设置)
+  HTTP_PROXY = http://127.0.0.1:51510
+  HTTPS_PROXY = http://127.0.0.1:51510
+  NO_PROXY = 127.0.0.1,localhost,::1
+  PIP_INDEX_URL = (未设置)
+  HF_HOME = (未设置)
+  TRANSFORMERS_CACHE = (未设置)
+  DOCKER_HOST = (未设置)
