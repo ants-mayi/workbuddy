@@ -192,6 +192,35 @@ def api_ai_tools():
     return jsonify({"tools": out})
 
 
+@app.route("/api/ai-local")
+def api_ai_local():
+    """本机 AI 全景：安装/环境、产物、日志、数据路径四类，附存在性标记。
+    体积信息写在 config 的 note 里（实测快照），此处只做轻量 exists 判断，不遍历大目录。"""
+    GROUPS = [
+        ("installs", "安装 / 环境"),
+        ("artifacts", "产物（模型 / 数据集）"),
+        ("logs", "日志 / 训练状态"),
+        ("data", "数据 / 缓存路径"),
+    ]
+    raw = P.get("facts", {}).get("ai_local", {})
+    out = []
+    for key, label in GROUPS:
+        items = []
+        for it in raw.get(key, []):
+            r = it.get("path") or ""
+            if r.startswith("~"):
+                path = os.path.expanduser(r)
+            elif r:
+                path = str(_resolve(r))
+            else:
+                path = ""
+            exists = os.path.exists(path) if path else None
+            items.append({"name": it.get("name", ""), "path": path,
+                          "note": it.get("note", ""), "exists": exists})
+        out.append({"key": key, "label": label, "items": items})
+    return jsonify({"groups": out})
+
+
 def _app_bundle_version(app_path):
     """读取 macOS .app 的 CFBundleShortVersionString（无探测命令的 GUI 应用用）。"""
     try:

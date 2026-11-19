@@ -80,12 +80,12 @@ function toast(msg){let t=$('toast');if(!t){t=document.createElement('div');t.id
 function openPath(p){fetch('/api/open-path',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:p})}).then(r=>r.json()).then(d=>toast(d.msg||(d.ok?'已打开':'打开失败'))).catch(()=>toast('打开失败'));}
 
 const LABELS={status:'状态总览',info:'基础信息',pathtruth:'PATH 真相',envvars:'环境变量',
-  software:'软件状态',aitools:'AI 工具',servicesvc:'服务与端口',ports_live:'实时端口',processes:'关键进程',
+  software:'软件状态',aitools:'AI 工具',ailocal:'AI 全景',servicesvc:'服务与端口',ports_live:'实时端口',processes:'关键进程',
   test:'快速测试',doctor:'环境体检',cmdlib:'命令库',cache:'缓存管理',docs:'速查文档',
   quiz:'记忆抽测',curve:'训练曲线',data:'数据速览',inspect:'产物解读',service:'推理服务'};
 let SECTIONS=[['status','状态总览']];
 const RENDER={status:renderStatus,info:renderInfo,pathtruth:renderPathTruth,envvars:renderEnvVars,
-  software:renderSoftware,aitools:renderAITools,servicesvc:renderServices,ports_live:renderPortsLive,processes:renderProcesses,
+  software:renderSoftware,aitools:renderAITools,ailocal:renderAILocal,servicesvc:renderServices,ports_live:renderPortsLive,processes:renderProcesses,
   test:renderTest,doctor:renderDoctor,cmdlib:renderCmdLib,cache:renderCache,docs:renderDocs,
   quiz:renderQuiz,curve:renderCurve,data:renderData,inspect:renderInspect,service:renderService};
 
@@ -357,6 +357,29 @@ async function renderAITools(){
     ${cards||'<div class="card">无数据：config.py 的 facts.ai_tools 未配置（Windows 侧按实际安装补充）</div>'}`;
 }
 
+// ── AI 全景：安装/环境、产物、日志、数据路径四类（本机 AI 资产总览）──
+async function renderAILocal(){
+  const el=$('p-ailocal'); el.innerHTML='<div class="spinner">读取本机 AI 信息…</div>';
+  let d={groups:[]}; try{ d=await api('/api/ai-local'); }catch(e){}
+  const ICON={installs:'⚙️',artifacts:'🧩',logs:'📜',data:'🗂️'};
+  const groups=(d.groups||[]).map(g=>{
+    const rows=(g.items||[]).map(x=>{
+      const badge=x.exists===true?'<span class="tag ok">存在</span>':x.exists===false?'<span class="tag bad">缺失</span>':'';
+      const btn=(x.exists!==false&&x.path)?`<button class="mini-btn" title="${IS_MAC?'在 Finder 中打开':'在资源管理器中打开'}" data-path="${esc(x.path)}" onclick="openPath(this.dataset.path)">打开</button>`:'';
+      return `<tr>
+        <td style="vertical-align:top;white-space:nowrap">${esc(x.name)} ${badge}</td>
+        <td style="font-size:11px;word-break:break-all"><code>${esc(x.path||'-')}</code></td>
+        <td style="font-size:11px">${esc(x.note||'')}</td>
+        <td>${btn}</td></tr>`;
+    }).join('');
+    return `<div class="card"><h3>${ICON[g.key]||'•'} ${esc(g.label)} <span class="k">${(g.items||[]).length} 项</span></h3>
+      <table><tr><th style="width:180px">项目</th><th style="width:34%">路径</th><th>说明（含实测体积）</th><th style="width:52px">操作</th></tr>
+      ${rows||'<tr><td colspan="4" class="note">无数据</td></tr>'}</table></div>`;
+  }).join('');
+  el.innerHTML=`<h2>本机 AI 全景</h2><p class="lead">本机 AI 资产四类总览：<b>安装/环境</b>、<b>产物（模型/数据集）</b>、<b>日志/训练状态</b>、<b>数据/缓存路径</b>。路径存在性实时标注，体积为实测快照（写在说明里）。与「AI 工具」面板互补：这里聚焦模型与环境，那边聚焦助手与 IDE。</p>
+    ${groups||'<div class="card">无数据：config.py 的 facts.ai_local 未配置</div>'}`;
+}
+
 async function renderSoftware(){
   const el=$('p-software'); el.innerHTML='<div class="spinner">读取软件状态…</div>';
   let d={software:[]}, svc={};
@@ -532,12 +555,13 @@ async function renderInspect(){
 async function renderCache(){
   const el=$('p-cache'); el.innerHTML='<div class="spinner">读取缓存占用…</div>';
   const d=await api('/api/cache');
-  el.innerHTML=`<h2>缓存管理</h2><p class="lead">查看占用；清理需二次确认。</p>
+  el.innerHTML=`<h2>缓存管理</h2><p class="lead">查看占用；清理需二次确认。${d.computing?'<span class="tag warn">大小后台计算中，自动刷新…</span>':''}</p>
   <div class="card">${(d.items||[]).map(it=>`<div class="kv" style="margin-bottom:10px">
-    <div class="v">${esc(it.name)} · ${it.size_mb!=null?it.size_mb+' MB':'不存在'} 
+    <div class="v">${esc(it.name)} · ${it.size_mb!=null?(it.size_mb>=1024?(it.size_mb/1024).toFixed(2)+' GB':it.size_mb+' MB'):(d.computing?'计算中…':'不存在')}
     <span class="tag ${it.safe?'ok':'warn'}">${it.safe?'可清理':'谨慎'}</span></div>
     <div class="k">${esc(it.path)}</div>${it.note?`<div class="k">${esc(it.note)}</div>`:''}</div>`).join('')}</div>
   <button class="btn ghost" id="cln">清理可安全项</button><div id="clnout"></div>`;
+  if(d.computing) setTimeout(()=>{ if($('p-cache')) renderCache(); },3000);
   $('cln').onclick=async()=>{
     if(!confirm('确定删除所有标记为"可清理"的缓存/checkpoint？此操作不可撤销。'))return;
     const r=await api('/api/cache/clean');

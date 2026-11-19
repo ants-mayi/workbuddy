@@ -8,7 +8,7 @@ r"""
 所有主题信息集中在本文件；版本探测用绝对路径调用各工具，稳定复现。
 
 本文件同时保存两套事实数据（保证 Windows 和 Mac 都能用）：
-    PROFILE_WIN —— Windows 11 台式机（事实源 M:\AI\WorkBuddy\docs\电脑开发环境信息.md，2026-11-16 采集）
+    PROFILE_WIN —— Windows 11 台式机（事实源 G:\AI\WorkBuddy\docs\电脑开发环境信息.md，2026-11-16 采集）
     PROFILE_MAC —— MacBook (Apple M2)（2026-11-17 用 mac/collect_mac.py 实测采集）
 文件末尾按 sys.platform 自动选择：win32 → PROFILE_WIN，其余 → PROFILE_MAC。
 把整个 env/ 目录拷到另一台机器后，只需更新对应平台的 PROFILE_* 即可，引擎不用改。
@@ -148,7 +148,7 @@ except Exception:
 
     # ── 7. recap 核心速记 ─────────────────────────────────────────
     "recap": {
-        "core": "唯一事实源：M:\\AI\\WorkBuddy\\docs\\电脑开发环境信息.md（23 节）\n"
+        "core": "唯一事实源：G:\\AI\\WorkBuddy\\docs\\电脑开发环境信息.md（23 节）\n"
                 "AI 解释器只有 G:\\workIns\\conda\\envs\\pytorch\\python.exe（torch 2.11+cu126 / transformers 5.8），不在 PATH\n"
                 "PATH 里的 python 有 3 套（3.13.14 / 3.14 / 3.13.9）但都没有 AI 库；装包一律 python -m pip\n"
                 "两套 Conda：D 盘 wofkIns（PATH 中，仅 base）/ G 盘 workIns（AI 环境所在）",
@@ -169,50 +169,119 @@ except Exception:
     # ── 8. 主题定制字段（引擎副本读取；脚手架模板不认识，不影响）──
     "ui": {
         # Web 面板显示顺序（面向"查询 + 操作"，移除记忆抽测 quiz）
-        # pathtruth=PATH真相 / envvars=环境变量 / ports_live=实时端口 / processes=关键进程 / cmdlib=命令库
-        "sections": ["status", "info", "pathtruth", "envvars", "software", "aitools", "servicesvc",
+        # pathtruth=PATH真相 / envvars=环境变量 / ports_live=实时端口 / processes=关键进程 / cmdlib=命令库 / ailocal=本机AI全景
+        "sections": ["status", "info", "pathtruth", "envvars", "software", "aitools", "ailocal", "servicesvc",
                      "ports_live", "processes", "test", "doctor", "cmdlib", "cache", "docs"],
     },
     "facts": {
         "ai_tools": [
-            # 依据 Windows 事实源（01-B3/B4，2026-11-16 采集）预填；
-            # ⚠️ 子目录/数据路径需在 Windows 实机复核后补全（复核前不写猜测路径）
+            # 2026-11-19 实机复核：Windows 侧路径全部实测存在性，替换早期"待复核"占位。
             {
                 "name": "WorkBuddy（腾讯）", "version": "5.11.3",
-                "app": "", "home": "", "size": "",
+                "app": r"D:\softIns\LenovoSoftstore\Install\WorkBuddy", "home": r"C:\Users\marco\.workbuddy", "size": "1.58 GB",
                 "items": [
-                    {"name": "安装目录", "path": r"D:\softIns", "note": "事实源 B4：WorkBuddy 安装于 D:\\softIns 下（具体子目录待实机复核）"},
+                    {"name": "安装目录", "path": r"D:\softIns\LenovoSoftstore\Install\WorkBuddy", "note": "主程序；内置 node/python 运行时"},
+                    {"name": "数据目录（逻辑）", "path": r"C:\Users\marco\.workbuddy", "note": "Junction，指向下方实体目录"},
+                    {"name": "数据目录（实体）", "path": r"G:\AI\default\WorkBuddy\.workbuddy", "note": "配置/插件/会话/日志/memory 实际落盘处"},
+                    {"name": "技能", "path": r"C:\Users\marco\.workbuddy\skills", "note": "已装 Skill"},
+                    {"name": "MCP 配置", "path": r"C:\Users\marco\.workbuddy\mcp.json", "note": "连接器授权"},
                 ],
-                "note": "内置 node/python（PATH 首个来自它）；Windows 侧数据目录待实机采集",
+                "note": "~/.workbuddy 是 Junction（C 盘只剩路标，数据全在 G 盘），不要当缓存清理",
             },
             {
-                "name": "千问 Qianwen（阿里）", "version": "5.2.0",
-                "app": "", "home": "", "size": "",
+                "name": "千问 Qianwen（阿里）", "version": "5.2.0.298",
+                "app": r"D:\wofkIns\QianwenApp", "home": "", "size": "",
                 "items": [
-                    {"name": "安装目录", "path": r"D:\softIns", "note": "事实源 B4：安装于 D:\\softIns 下（具体子目录待实机复核）"},
+                    {"name": "安装目录", "path": r"D:\wofkIns\QianwenApp", "note": "主程序"},
+                    {"name": "tongyi 组件", "path": r"D:\wofkIns\tongyi", "note": "同厂商配套组件"},
                 ],
-                "note": "Windows 侧是否另有千问办公未记录，待实机确认",
+                "note": "Windows 侧未见 ~/.qwen 数据目录（Mac 侧有），以云端为主",
             },
             {
                 "name": "豆包（字节）", "version": "2.32.6",
-                "app": "", "home": "", "size": "",
+                "app": r"D:\softIns\Doubao", "home": "", "size": "",
                 "items": [
-                    {"name": "安装目录", "path": r"D:\softIns", "note": "事实源 B4：安装于 D:\\softIns 下（具体子目录待实机复核）"},
+                    {"name": "安装目录", "path": r"D:\softIns\Doubao", "note": "主程序"},
                 ],
-                "note": "Mac 侧未安装（仅 Windows 有）",
+                "note": "Windows 侧专用（Mac 侧未安装）",
             },
             {
                 "name": "Trae CN（字节）", "version": "3.4.20",
-                "app": r"D:\Program Files (x86)\Trae CN", "home": "", "size": "",
+                "app": r"D:\Program Files (x86)\Trae CN", "home": r"C:\Users\marco\AppData\Roaming\Trae CN", "size": "",
                 "items": [
-                    {"name": "安装目录", "path": r"D:\Program Files (x86)\Trae CN", "note": "事实源 B3 实测路径"},
+                    {"name": "安装目录", "path": r"D:\Program Files (x86)\Trae CN", "note": "IDE 主程序"},
+                    {"name": "用户数据", "path": r"C:\Users\marco\AppData\Roaming\Trae CN", "note": "设置/工作区存储"},
                 ],
-                "note": "与 Mac 侧 Trae CN 3.4.20 同版本；用户数据目录待实机采集",
+                "note": "与 Mac 侧 Trae CN 3.4.20 同版本",
+            },
+            {
+                "name": "Codex / ChatGPT（OpenAI）", "version": "-",
+                "app": "", "home": r"C:\Users\marco\.codex", "size": "",
+                "items": [
+                    {"name": "CLI 配置与会话", "path": r"C:\Users\marco\.codex", "note": "config.toml / sessions；本机 Windows 侧有数据目录"},
+                    {"name": "项目数据", "path": r"G:\study\AI\codex", "note": "codex 项目工作数据"},
+                ],
+                "note": "桌面端 ChatGPT 未装；CLI 配置目录实测存在",
             },
         ],
+
+        # ── 本机 AI 全景：安装/环境、产物、日志、数据路径（2026-11-19 实机采集）──
+        # 供「AI 全景」面板分四类展示；每项带 name/path/note，存在性由 /api/ai-local 实时标注。
+        "ai_local": {
+            "installs": [
+                {"name": "PyTorch 环境解释器", "path": r"G:\workIns\conda\envs\pytorch\python.exe",
+                 "note": "Python 3.13.13；唯一装齐 torch 2.11.0+cu126 / transformers 5.8.0 的解释器，不在 PATH"},
+                {"name": "AI 环境根目录", "path": r"G:\workIns\conda\envs\pytorch",
+                 "note": "G 盘 Conda 的 pytorch 环境本体；AI 任务固定用它的 python.exe"},
+                {"name": "site-packages", "path": r"G:\workIns\conda\envs\pytorch\Lib\site-packages",
+                 "note": "AI 栈第三方库：datasets 4.8.5 / accelerate 1.13.0 / safetensors 0.7.0 / tokenizers 0.22.2 等"},
+                {"name": "G 盘 Conda 根", "path": r"G:\workIns\conda",
+                 "note": "含 envs/pytorch + pkgs（11.3 GB）+ pkgs.7z（2.4 GB）；无 conda.exe，从开始菜单启动"},
+                {"name": "D 盘 Conda 根", "path": r"D:\wofkIns\anaconda3",
+                 "note": "PATH 中的 Conda，仅 base、envs 空；两套 Conda 目录拼写不同（wofkIns vs workIns）"},
+            ],
+            "artifacts": [
+                {"name": "IMDb 微调模型（eval_acc 0.93236）", "path": r"G:\study\AI\cache\imdb_m2_optimized",
+                 "note": "10.3 GB；model.safetensors 433MB + checkpoint-500/1000/1500/1564；eval_results.json 准确率 93.24%"},
+                {"name": "TextClassification 实验产物", "path": r"G:\study\AI\huggingface\TextClassification\experiments",
+                 "note": "model.safetensors 438MB + checkpoint-8/306 + predict_results.txt；含评测指标 json"},
+                {"name": "HF hub 已缓存模型", "path": r"G:\study\AI\cache\huggingface\hub",
+                 "note": "bert-base-uncased / gpt2 / distilbert 情感分析（sst-2）；数据集 imdb / amazon_reviews_multi / reuters21578"},
+                {"name": "bert-base-cased", "path": r"G:\study\AI\cache\bert-base-cased",
+                 "note": "3.4 GB，独立缓存的预训练模型"},
+                {"name": "HF 项目源码与归档", "path": r"G:\study\AI\huggingface",
+                 "note": "TextClassification / dive-into-llms / transformers-main 及多个 zip 归档（约 2.8 GB）"},
+            ],
+            "logs": [
+                {"name": "HF 推理服务日志", "path": r"G:\study\AI\huggingface\hfctl\serve.log",
+                 "note": "hfctl 服务启动/运行日志"},
+                {"name": "HF Web 控制台日志", "path": r"G:\study\AI\huggingface\hfctl\webctl.log",
+                 "note": "HF 控制台（8000 端口）运行日志"},
+                {"name": "IMDb 训练状态", "path": r"G:\study\AI\cache\imdb_m2_optimized\trainer_state.json",
+                 "note": "训练过程逐 step 状态（loss/learning_rate），各 checkpoint 下亦有副本"},
+                {"name": "TextClassification 评测产物", "path": r"G:\study\AI\huggingface\TextClassification\experiments\predict_results.txt",
+                 "note": "预测结果明细；同目录 eval_results.json / all_results.json 为指标汇总"},
+                {"name": "Spring Boot 运行日志", "path": r"G:\study\AI\codex\260519\target\spring-boot-run.log",
+                 "note": "codex 项目运行日志（非 AI 训练，同盘一并归档）"},
+            ],
+            "data": [
+                {"name": "HF 缓存根（HF_HOME）", "path": r"G:\study\AI\cache\huggingface",
+                 "note": "2.9 GB；hub/datasets/evaluate/metrics/modules/xet 子类；系统环境变量 HF_HOME 已生效"},
+                {"name": "AI 缓存总根", "path": r"G:\study\AI\cache",
+                 "note": "16.5 GB：huggingface 2.9 + imdb_m2_optimized 10.3 + bert-base-cased 3.4 GB"},
+                {"name": "训练输出目录", "path": r"G:\study\AI\cache\outputs",
+                 "note": "临时训练输出（约 1 MB）"},
+                {"name": "Conda 包缓存（G 盘）", "path": r"G:\workIns\conda\pkgs",
+                 "note": "11.3 GB，AI 环境依赖包缓存；删除前确认环境不再需要"},
+                {"name": "pip 缓存", "path": r"C:\Users\marco\AppData\Local\pip\Cache",
+                 "note": "6.7 GB，各 Python 共用；清理用 pip cache purge"},
+                {"name": "AI 工作区根", "path": r"G:\study\AI",
+                 "note": "cache/huggingface/codex/qwen/WorkBuddy 五大子目录，AI 资产主目录"},
+            ],
+        },
         # 关键路径（status 面板展示存在性）
         "paths": [
-            {"name": "环境手册（事实源）", "path": r"M:\AI\WorkBuddy\docs\电脑开发环境信息.md"},
+            {"name": "环境手册（事实源）", "path": r"G:\AI\WorkBuddy\docs\电脑开发环境信息.md"},
             {"name": "AI 环境解释器", "path": r"G:\workIns\conda\envs\pytorch\python.exe"},
             {"name": "HF 缓存", "path": r"G:\study\AI\cache\huggingface"},
             {"name": "JDK", "path": r"D:\wofkIns\jdk-17.0.0.1"},
@@ -257,11 +326,11 @@ except Exception:
 
         # ── 基础信息：配置文件路径（2026-11-17 实测存在性）────────
         "config_files": [
-            {"name": "环境手册（唯一事实源）", "path": r"M:\AI\WorkBuddy\docs\电脑开发环境信息.md",
+            {"name": "环境手册（唯一事实源）", "path": r"G:\AI\WorkBuddy\docs\电脑开发环境信息.md",
              "note": "23 节，软件升级/路径变更后先改这里"},
-            {"name": "本控制台配置", "path": r"M:\AI\WorkBuddy\env\config.py",
+            {"name": "本控制台配置", "path": r"G:\AI\WorkBuddy\env\config.py",
              "note": "改版本探测/路径/面板都在这里"},
-            {"name": "控制台题库（当前未启用）", "path": r"M:\AI\WorkBuddy\env\question_bank.py",
+            {"name": "控制台题库（当前未启用）", "path": r"G:\AI\WorkBuddy\env\question_bank.py",
              "note": "已移除记忆抽测，文件保留备用"},
             {"name": "Git 全局配置", "path": r"C:\Users\marco\.gitconfig", "note": "user.name/email 等"},
             {"name": "Maven 全局 settings.xml", "path": r"D:\wofkIns\apache-maven-3.9.9\conf\settings.xml",
@@ -287,7 +356,7 @@ except Exception:
              "note": "实测 11.65 GB；全局 conf/settings.xml 指定（默认 ~/.m2/repository 仅 0.07 GB 残留）"},
             {"name": "pip 缓存", "path": r"C:\Users\marco\AppData\Local\pip\Cache", "note": "下载过的 wheel"},
             {"name": "npm 缓存", "path": r"C:\Users\marco\AppData\Local\npm-cache", "note": "Node 包缓存"},
-            {"name": "控制台速查文档", "path": r"M:\AI\WorkBuddy\env\notes", "note": "6 份复习/查询文档"},
+            {"name": "控制台速查文档", "path": r"G:\AI\WorkBuddy\env\notes", "note": "13 份复习/查询文档（含 12-本机AI全景速查）"},
         ],
 
         # ── 软件状态：开发工具 + 运行时（版本实时探测，路径/操作来自此表）──

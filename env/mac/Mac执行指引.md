@@ -27,7 +27,7 @@ Windows 与 Mac 用同一套引擎和 config：`config.py` 内 `PROFILE_WIN` / `
 只需要 **1 个文件**：
 
 ```
-M:\AI\WorkBuddy\env\mac\collect_mac.py
+G:\AI\WorkBuddy\env\mac\collect_mac.py
 ```
 
 放到 Mac 上任意目录即可，例如 `~/env-mac/`：

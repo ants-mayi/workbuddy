@@ -372,4 +372,4 @@ scp -r dir user@host:/tmp/                # 递归传目录
 
 ---
 
-> **维护提示**：本文件与 [06-跨平台命令速查与差异](06-跨平台命令速查与差异.md)、`config.py` 的 `command_lib`、`M:\AI\WorkBuddy\docs\电脑开发环境信息.md` 是四处维护，升级系统/软件后记得同步。
+> **维护提示**：本文件与 [06-跨平台命令速查与差异](06-跨平台命令速查与差异.md)、`config.py` 的 `command_lib`、`G:\AI\WorkBuddy\docs\电脑开发环境信息.md` 是四处维护，升级系统/软件后记得同步。
